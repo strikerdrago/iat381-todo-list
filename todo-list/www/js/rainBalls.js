@@ -1,10 +1,9 @@
 // kynd.info 2014
 
 var hammertime = new Hammer(document.getElementById('rainBalls'));
+
+// enable pinch gesture detection
 hammertime.get('pinch').set({ enable: true });
-hammertime.on('pinch', function(ev) {
-    console.log(ev);
-});
 
 function Ball(r, p, v, textInput) {
 	this.radius = r;
@@ -122,16 +121,25 @@ Ball.prototype = {
 
 var balls = [];
 var numBalls = 3;
-for (var i = 0; i < numBalls; i++) {
-	var position = Point.random() * view.size;
-	var vector = new Point({
+// for (var i = 0; i < numBalls; i++) {
+// 	var position = Point.random() * view.size;
+// 	var vector = new Point({
+// 		angle: 360 * Math.random(),
+// 		length: Math.random() * 10
+// 	});
+// 	var radius = Math.random() * 60 + 60;
+// 	var textInput = 'derp';
+// 	balls.push(new Ball(radius, position, vector));
+// }
+
+hammertime.on('pinch', function(ev) {
+    console.log(ev);
+    var position = new Point(ev.center.x, ev.center.y);
+    balls.push(new Ball(Math.random() * 60 + 60, position, new Point({
 		angle: 360 * Math.random(),
 		length: Math.random() * 10
-	});
-	var radius = Math.random() * 60 + 60;
-	var textInput = 'derp';
-	balls.push(new Ball(radius, position, vector));
-}
+	})));
+});
 
 function onFrame() {
 	for (var i = 0; i < balls.length - 1; i++) {
