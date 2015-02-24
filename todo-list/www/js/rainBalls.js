@@ -132,7 +132,7 @@ var numBalls = 3;
 // 	balls.push(new Ball(radius, position, vector));
 // }
 
-hammertime.on('pinch', function(ev) {
+hammertime.on('pinchstart', function(ev) {
     console.log(ev);
     var position = new Point(ev.center.x, ev.center.y);
     balls.push(new Ball(Math.random() * 60 + 60, position, new Point({
