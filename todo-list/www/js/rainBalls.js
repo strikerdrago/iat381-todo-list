@@ -1,14 +1,22 @@
 // kynd.info 2014
 
-function Ball(r, p, v) {
+var hammertime = new Hammer(document.getElementById('rainBalls'));
+hammertime.get('pinch').set({ enable: true });
+hammertime.on('pinch', function(ev) {
+    console.log(ev);
+});
+
+function Ball(r, p, v, textInput) {
 	this.radius = r;
 	this.point = p;
 	this.vector = v;
-	this.maxVec = 15;
+	this.maxVec = 2;
 	this.numSegment = Math.floor(r / 3 + 2);
 	this.boundOffset = [];
 	this.boundOffsetBuff = [];
 	this.sidePoints = [];
+
+	this.textInput = textInput;
 	this.path = new Path({
 		fillColor: {
 			hue: Math.random() * 360,
@@ -113,7 +121,7 @@ Ball.prototype = {
 //--------------------- main ---------------------
 
 var balls = [];
-var numBalls = 18;
+var numBalls = 3;
 for (var i = 0; i < numBalls; i++) {
 	var position = Point.random() * view.size;
 	var vector = new Point({
@@ -121,6 +129,7 @@ for (var i = 0; i < numBalls; i++) {
 		length: Math.random() * 10
 	});
 	var radius = Math.random() * 60 + 60;
+	var textInput = 'derp';
 	balls.push(new Ball(radius, position, vector));
 }
 
