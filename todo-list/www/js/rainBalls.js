@@ -51,8 +51,11 @@ Ball.prototype = {
 			this.point.x = size.width + this.radius;
 		if (this.point.x > size.width + this.radius)
 			this.point.x = -this.radius;
-		if (this.point.y < -this.radius)
-			this.point.y = size.height + this.radius;
+		if (this.point.y < this.radius) {
+			console.log(this.vector.angle);
+			// this.point.y = size.height + this.radius;
+      this.vector.angle = -this.vector.angle;
+    }
 		if (this.point.y > size.height + this.radius)
 			this.point.y = -this.radius;
 	},
@@ -135,19 +138,24 @@ var numBalls = 3;
 hammertime.on('pinchstart', function(ev) {
     console.log(ev);
     var position = new Point(ev.center.x, ev.center.y);
-    balls.push(new Ball(Math.random() * 60 + 60, position, new Point({
-		angle: 360 * Math.random(),
-		length: Math.random() * 10
-	})));
+    balls.push(new Ball(
+      Math.random() * 60 + 60,
+      position,
+      new Point({
+        angle: 360 * Math.random(),
+        length: Math.random() * 10
+      }),
+      'derp'
+    ));
 });
 
 function onFrame() {
-	for (var i = 0; i < balls.length - 1; i++) {
-		for (var j = i + 1; j < balls.length; j++) {
-			balls[i].react(balls[j]);
-		}
-	}
-	for (var i = 0, l = balls.length; i < l; i++) {
-		balls[i].iterate();
-	}
+  for (var i = 0; i < balls.length - 1; i++) {
+    for (var j = i + 1; j < balls.length; j++) {
+    balls[i].react(balls[j]);
+    }
+  }
+  for (var i = 0, l = balls.length; i < l; i++) {
+    balls[i].iterate();
+  }
 }
