@@ -39,11 +39,15 @@ function Ball(r, p, v, textInput) {
 			length: 1
 		}));
 	}
-
+	var tempPath = this.path;
 	this.textInput = textInput;
 	this.textInput.justification = 'center';
-	this.textInput.content = "yo yo yo";
+	this.textInput.content = "yo yo yo yo yo yo";
 	this.textInput.bringToFront();
+
+	// [TODO] Make clipping path visable
+	var tempGroup = new Group([tempPath,this.textInput]);
+	tempGroup.clipped = true;
 }
 
 Ball.prototype = {
@@ -148,22 +152,43 @@ var numBalls = 3;
 // 	balls.push(new Ball(radius, position, vector));
 // }
 
-hammertime.on('pinchstart', function(ev) {
-    console.log(ev);
-    var position = new Point(ev.center.x, ev.center.y);
-    balls.push(new Ball(Math.random() * 60 + 60, 
-    	position, 
-    	new Point({
-		angle: 360 * Math.random(),
-		length: Math.random() * 10
-		}),
-    	new PointText({
+var text1 = new PointText({
+			point: [50,50],
+			content: 'test',
 		    fillColor: 'black',
 		    fontFamily: 'Courier New',
 		    fontWeight: 'bold',
 		    fontSize: 25
-		})
-	));
+		});
+
+var text2 = new PointText({
+			point: [50,75],
+			content: 'super long testing thing',
+		    fillColor: 'black',
+		    fontFamily: 'Courier New',
+		    fontWeight: 'bold',
+		    fontSize: 25
+		});
+var group = new Group([text1,text2]);
+
+hammertime.on('pinchstart', function(ev) {
+    console.log(ev);
+    var position = new Point(ev.center.x, ev.center.y);
+    var tempBall = new Ball(Math.random() * 60 + 60, 
+    	position, 
+    	new Point({
+		angle: 360 * Math.random(),
+		length: Math.random() * 10
+		}),new PointText({
+		    fillColor: 'black',
+		    fontFamily: 'Courier New',
+		    fontWeight: 'bold',
+		    fontSize: 25
+		}));
+    balls.push(tempBall);
+    // var tempGroup = new Group([text1,text2]);
+    // tempGroup.position += 50;
+	
 });
 
 function onFrame() {
