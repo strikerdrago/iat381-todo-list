@@ -1,6 +1,7 @@
 // kynd.info 2014
 
 var hammertime = new Hammer(document.getElementById('rainBalls'));
+var gravity = 0.5;
 
 // enable pinch gesture detection
 hammertime.get('pinch').set({ enable: true });
@@ -42,6 +43,7 @@ Ball.prototype = {
 		if (this.vector.length > this.maxVec)
 			this.vector.length = this.maxVec;
 		this.point += this.vector;
+    this.vector.y += gravity;
 		this.updateShape();
 	},
 
