@@ -19,10 +19,8 @@ function Ball(r, p, v, textInput) {
 	// this.textInput = textInput;
 	// console.log(this.textInput);
 
-	this.textInput = textInput;
 	
-	textInput.content = "yo yo yo";
-	console.log(textInput);
+	// console.log(textInput);
 	this.path = new Path({
 		fillColor: {
 			hue: Math.random() * 360,
@@ -41,6 +39,11 @@ function Ball(r, p, v, textInput) {
 			length: 1
 		}));
 	}
+
+	this.textInput = textInput;
+	this.textInput.justification = 'center';
+	this.textInput.content = "yo yo yo";
+	this.textInput.bringToFront();
 }
 
 Ball.prototype = {
@@ -85,6 +88,7 @@ Ball.prototype = {
 			offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
 			this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
 		}
+		this.textInput.point = this.point;
 	},
 
 	react: function(b) {
@@ -147,18 +151,18 @@ var numBalls = 3;
 hammertime.on('pinchstart', function(ev) {
     console.log(ev);
     var position = new Point(ev.center.x, ev.center.y);
-    balls.push(new Ball(Math.random() * 60 + 60, position, new Point({
+    balls.push(new Ball(Math.random() * 60 + 60, 
+    	position, 
+    	new Point({
 		angle: 360 * Math.random(),
 		length: Math.random() * 10
-	}),
-    new PointText({
-	    point: [50, 50],
-	    content: '',
-	    fillColor: 'black',
-	    fontFamily: 'Courier New',
-	    fontWeight: 'bold',
-	    fontSize: 25
-	})
+		}),
+    	new PointText({
+		    fillColor: 'black',
+		    fontFamily: 'Courier New',
+		    fontWeight: 'bold',
+		    fontSize: 25
+		})
 	));
 });
 
