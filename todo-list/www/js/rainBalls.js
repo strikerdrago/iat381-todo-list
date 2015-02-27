@@ -47,17 +47,20 @@ Ball.prototype = {
 
 	checkBorders: function() {
 		var size = view.size;
-		if (this.point.x < -this.radius)
-			this.point.x = size.width + this.radius;
-		if (this.point.x > size.width + this.radius)
-			this.point.x = -this.radius;
+		if (this.point.x < this.radius)
+			// this.point.x = size.width + this.radius;
+      this.vector.angle = 180-this.vector.angle;
+		if (this.point.x > size.width - this.radius)
+			// this.point.x = -this.radius;
+      this.vector.angle = 180-this.vector.angle;
 		if (this.point.y < this.radius) {
-			console.log(this.vector.angle);
+			// console.log(this.vector.angle);
 			// this.point.y = size.height + this.radius;
       this.vector.angle = -this.vector.angle;
     }
-		if (this.point.y > size.height + this.radius)
-			this.point.y = -this.radius;
+		if (this.point.y > size.height - this.radius)
+			// this.point.y = -this.radius;
+      this.vector.angle = -this.vector.angle;
 	},
 
 	updateShape: function() {
