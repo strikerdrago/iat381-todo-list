@@ -15,7 +15,14 @@ function Ball(r, p, v, textInput) {
 	this.boundOffsetBuff = [];
 	this.sidePoints = [];
 
+
+	// this.textInput = textInput;
+	// console.log(this.textInput);
+
 	this.textInput = textInput;
+	
+	textInput.content = "yo yo yo";
+	console.log(textInput);
 	this.path = new Path({
 		fillColor: {
 			hue: Math.random() * 360,
@@ -42,6 +49,7 @@ Ball.prototype = {
 		if (this.vector.length > this.maxVec)
 			this.vector.length = this.maxVec;
 		this.point += this.vector;
+		this.textInput.point = this.point;
 		this.updateShape();
 	},
 
@@ -51,10 +59,14 @@ Ball.prototype = {
 			this.point.x = size.width + this.radius;
 		if (this.point.x > size.width + this.radius)
 			this.point.x = -this.radius;
-		if (this.point.y < -this.radius)
+		if (this.point.y < -this.radius){
+			// console.log("I reached the top!");
 			this.point.y = size.height + this.radius;
-		if (this.point.y > size.height + this.radius)
+		}
+		if (this.point.y > size.height + this.radius){
+
 			this.point.y = -this.radius;
+		}
 	},
 
 	updateShape: function() {
@@ -132,13 +144,22 @@ var numBalls = 3;
 // 	balls.push(new Ball(radius, position, vector));
 // }
 
-hammertime.on('pinch', function(ev) {
+hammertime.on('pinchstart', function(ev) {
     console.log(ev);
     var position = new Point(ev.center.x, ev.center.y);
     balls.push(new Ball(Math.random() * 60 + 60, position, new Point({
 		angle: 360 * Math.random(),
 		length: Math.random() * 10
-	})));
+	}),
+    new PointText({
+	    point: [50, 50],
+	    content: '',
+	    fillColor: 'black',
+	    fontFamily: 'Courier New',
+	    fontWeight: 'bold',
+	    fontSize: 25
+	})
+	));
 });
 
 function onFrame() {
