@@ -39,14 +39,16 @@ function Ball(r, p, v, textInput) {
 			length: 1
 		}));
 	}
-	var tempPath = this.path;
+	this.tempPath = this.path.clone();
+	
 	this.textInput = textInput;
-	this.textInput.justification = 'center';
-	this.textInput.content = "yo yo yo yo yo yo";
+	this.textInput.justification = 'left';
+	this.textInput.content = "Hello World";
 	this.textInput.bringToFront();
+	this.textInput.position.x -= this.radius;
 
-	// [TODO] Make clipping path visable
-	var tempGroup = new Group([tempPath,this.textInput]);
+	// Make clipping path visable
+	var tempGroup = new Group([this.tempPath,this.textInput]);
 	tempGroup.clipped = true;
 }
 
@@ -57,6 +59,7 @@ Ball.prototype = {
 			this.vector.length = this.maxVec;
 		this.point += this.vector;
 		this.textInput.point = this.point;
+		this.textInput.point.x -= this.radius - 5;
 		this.updateShape();
 	},
 
@@ -82,6 +85,7 @@ Ball.prototype = {
 			segments[i].point = this.getSidePoint(i);
 
 		this.path.smooth();
+		this.tempPath.smooth();
 		for (var i = 0; i < this.numSegment; i ++) {
 			if (this.boundOffset[i] < this.radius / 4)
 				this.boundOffset[i] = this.radius / 4;
@@ -92,7 +96,22 @@ Ball.prototype = {
 			offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
 			this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
 		}
-		this.textInput.point = this.point;
+
+		var segmentsOverlay = this.tempPath.segments;
+		for (var i = 0; i < this.numSegment; i ++)
+			segmentsOverlay[i].point = this.getSidePoint(i);
+
+		this.tempPath.smooth();
+		for (var i = 0; i < this.numSegment; i ++) {
+			if (this.boundOffset[i] < this.radius / 4)
+				this.boundOffset[i] = this.radius / 4;
+			var next = (i + 1) % this.numSegment;
+			var prev = (i > 0) ? i - 1 : this.numSegment - 1;
+			var offset = this.boundOffset[i];
+			offset += (this.radius - offset) / 15;
+			offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
+			this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
+		}
 	},
 
 	react: function(b) {
