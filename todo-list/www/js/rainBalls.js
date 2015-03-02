@@ -1,10 +1,21 @@
 // kynd.info 2014
 
-var hammertime = new Hammer(document.getElementById('rainBalls'));
+var mc = new Hammer.Manager(document.getElementById('rainBalls'),
+  {
+  recognizers: [
+      // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
+      // [Hammer.Rotate],
+      [Hammer.Pinch, { enable: true }]//, ['rotate']],
+      // [Hammer.Swipe,{ direction: Hammer.DIRECTION_HORIZONTAL }],
+  ]
+});
+
+mc.add(new Hammer.Pinch({ threshold: 0 }));
+
 var gravity = 0.1;
 
 // enable pinch gesture detection
-hammertime.get('pinch').set({ enable: true });
+mc.get('pinch').set({ enable: true });
 
 function Ball(r, p, v, textInput) {
 	this.radius = r;
@@ -146,17 +157,23 @@ var balls = [];
 // 	balls.push(new Ball(radius, position, vector));
 // }
 
-hammertime.on('pinchstart', function(ev) {
-    console.log(ev);
+mc.on('pinchstart', function(ev) {
+  console.log(ev);
+  var pinchingExistingCircle = false;
 
-    for (var i = 0; i < balls.length - 1; i++) {
-      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
-        // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
-        // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
-        balls[i].path.fillColor = 'black';
-      }
+  // loop through the balls array
+  for (var i = 0; i < balls.length - 1; i++) {
+    // check if the pinch point was in a circle
+    if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+      // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
+      // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
+      balls[i].path.fillColor = 'black';
+      pinchingExistingCircle = true;
     }
+  }
 
+  // if not pinching in an existing circle
+  if (!pinchingExistingCircle) {
     var radius = Math.random() * 60 + 60;
     var position = new Point(ev.center.x, ev.center.y);
 
@@ -169,6 +186,7 @@ hammertime.on('pinchstart', function(ev) {
       }),
       'derp'
     ));
+  }
 });
 
 function onFrame() {
@@ -182,20 +200,24 @@ function onFrame() {
   }
 }
 
+// function to check if a point is inside a circle
 function inCircle(center_x, center_y, radius, x, y) {
   var dx = Math.abs(x-center_x);
   var dy = Math.abs(y-center_y);
   var R = radius;
 
+  // if the distance from the point to the X center point, its not in the circle
   if (dx>R) {
     return false;
   }
+  // if the distance from the point to the Y center point, its not in the circle
   if (dy>R) {
     return false;
   }
   if (dx + dy <= R) {
     return true;
   }
+  // Pythagoras
   if (dx^2 + dy^2 <= R^2) {
     return true;
   }
