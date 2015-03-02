@@ -11,8 +11,7 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 });
 
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
-mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(mc.get('pan'));
-mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan'), mc.get('rotate')]);
+mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
 
 var gravity = -0.1;
 
@@ -29,7 +28,7 @@ function Ball(r, p, v, textInput) {
 	this.textInput = textInput;
 	this.path = new Path({
 		fillColor: {
-			hue: Math.random() * 360,
+			hue: 100,//Math.random() * 360,
 			saturation: 1,
 			brightness: 1
 		},
@@ -155,9 +154,10 @@ var balls = [];
 // 	var textInput = 'derp';
 // 	balls.push(new Ball(radius, position, vector));
 // }
-
+mc.on("panstart panmove panend", onPan);
 mc.on('pinchstart pinchmove pinchend', onPinch);
-var pinchingExistingCircle = false;
+
+var interactingWithExistingCircle = false;
 var currentBall;
 
 function onPinch(ev) {
@@ -172,13 +172,13 @@ function onPinch(ev) {
         // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
         currentBall = balls[i];
         currentBall.path.fillColor = 'black';
-        pinchingExistingCircle = true;
+        interactingWithExistingCircle = true;
         break;
       }
     }
 
     // if not pinching in an existing circle
-    if (!pinchingExistingCircle) {
+    if (!interactingWithExistingCircle) {
       var radius = Math.random() * 60 + 60;
       var position = new Point(ev.center.x, ev.center.y);
 
@@ -195,15 +195,47 @@ function onPinch(ev) {
   }
 
   else if (ev.type == 'pinchmove') {
-    if (pinchingExistingCircle) {
+    if (interactingWithExistingCircle) {
       currentBall.radius = ev.scale*50;
     }
   }
 
   else if (ev.type == 'pinchend') {
-    pinchingExistingCircle = false;
+    interactingWithExistingCircle = false;
     currentBall = null;
   }
+}
+
+function onPan(ev) {
+    if(ev.type == 'panstart') {
+    // loop through the balls array
+    for (var i = 0; i < balls.length - 1; i++) {
+      // check if the pinch point was in a circle
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+        // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
+        // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
+        currentBall = balls[i];
+        currentBall.path.fillColor = 'red';
+        interactingWithExistingCircle = true;
+        break;
+      }
+    }
+  }
+
+  else if (ev.type == 'panmove') {
+    if (interactingWithExistingCircle) {
+      currentBall.point.x = ev.center.x;
+      currentBall.point.y = ev.center.y;
+    }
+  }
+
+  else if (ev.type == 'panend') {
+    interactingWithExistingCircle = false;
+    currentBall = null;
+  }
+}
+
+function onRotate(ev) {
 }
 
 function onFrame() {
