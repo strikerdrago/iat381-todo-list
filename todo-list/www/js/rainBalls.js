@@ -24,7 +24,12 @@ function Ball(r, p, v, textInput) {
 	this.sidePoints = [];
   this.weight = -0.1;
 
-	this.textInput = textInput;
+
+	// this.textInput = textInput;
+	// console.log(this.textInput);
+
+	
+	// console.log(textInput);
 	this.path = new Path({
 		fillColor: {
 			hue: 100,//Math.random() * 360,
@@ -43,6 +48,17 @@ function Ball(r, p, v, textInput) {
 			length: 1
 		}));
 	}
+	this.tempPath = this.path.clone();
+	
+	this.textInput = textInput;
+	this.textInput.justification = 'left';
+	this.textInput.content = "Hello World";
+	this.textInput.bringToFront();
+	this.textInput.position.x -= this.radius;
+
+	// Make clipping path visable
+	var tempGroup = new Group([this.tempPath,this.textInput]);
+	tempGroup.clipped = true;
 }
 
 Ball.prototype = {
@@ -52,6 +68,8 @@ Ball.prototype = {
 			this.vector.length = this.maxVec;
 		this.point += this.vector;
     this.vector.y += this.weight;
+		this.textInput.point = this.point;
+		this.textInput.point.x -= this.radius - 5;
 		this.updateShape();
 	},
 
@@ -85,6 +103,23 @@ Ball.prototype = {
 			segments[i].point = this.getSidePoint(i);
 
 		this.path.smooth();
+		this.tempPath.smooth();
+		for (var i = 0; i < this.numSegment; i ++) {
+			if (this.boundOffset[i] < this.radius / 4)
+				this.boundOffset[i] = this.radius / 4;
+			var next = (i + 1) % this.numSegment;
+			var prev = (i > 0) ? i - 1 : this.numSegment - 1;
+			var offset = this.boundOffset[i];
+			offset += (this.radius - offset) / 15;
+			offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
+			this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
+		}
+
+		var segmentsOverlay = this.tempPath.segments;
+		for (var i = 0; i < this.numSegment; i ++)
+			segmentsOverlay[i].point = this.getSidePoint(i);
+
+		this.tempPath.smooth();
 		for (var i = 0; i < this.numSegment; i ++) {
 			if (this.boundOffset[i] < this.radius / 4)
 				this.boundOffset[i] = this.radius / 4;
@@ -158,9 +193,28 @@ mc.on('pinchstart pinchmove pinchend', onPinch);
 
 var interactingWithExistingCircle = false;
 var currentBall;
+var text1 = new PointText({
+			point: [50,50],
+			content: 'test',
+		    fillColor: 'black',
+		    fontFamily: 'Courier New',
+		    fontWeight: 'bold',
+		    fontSize: 25
+		});
+
+var text2 = new PointText({
+      point: [50,75],
+      content: 'super long testing thing',
+        fillColor: 'black',
+        fontFamily: 'Courier New',
+        fontWeight: 'bold',
+        fontSize: 25
+    });
+var group = new Group([text1,text2]);
 
 function onPinch(ev) {
   // console.log(ev);
+
 
   if(ev.type == 'pinchstart') {
     // loop through the balls array
@@ -180,16 +234,31 @@ function onPinch(ev) {
     if (!interactingWithExistingCircle) {
       var radius = Math.random() * 60 + 60;
       var position = new Point(ev.center.x, ev.center.y);
-
-      balls.push(new Ball(
-        radius,
-        position,
+      var tempBall = new Ball(
+        radius, 
+        position, 
         new Point({
           angle: 360 * Math.random(),
           length: Math.random() * 10
-        }),
-        'derp'
-      ));
+        }),new PointText({
+          fillColor: 'black',
+          fontFamily: 'Courier New',
+          fontWeight: 'bold',
+          fontSize: 25
+      }));
+      balls.push(tempBall);
+      // var tempGroup = new Group([text1,text2]);
+      // tempGroup.position += 50;
+
+      // balls.push(new Ball(
+      //   radius,
+      //   position,
+      //   new Point({
+      //     angle: 360 * Math.random(),
+      //     length: Math.random() * 10
+      //   }),
+      //   'derp'
+      // ));
     }
   }
 
