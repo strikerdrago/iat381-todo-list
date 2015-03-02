@@ -12,9 +12,13 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
 mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
-mc.add( new Hammer.Press({ event: 'press' }) );
+mc.add( new Hammer.Press({ time: '200' }) );
+mc.add( new Hammer.Tap({ event: 'singletap' }) );
 
-
+	// var tempWeight;
+	// var tempVector;
+var overlay = document.getElementById("overlay");
+overlayDisplay = overlay.style.display;
 
 
 function Ball(r, p, v, textInput) {
@@ -194,7 +198,8 @@ var balls = [];
 // }
 mc.on("panstart panmove panend", onPan);
 mc.on('pinchstart pinchmove pinchend', onPinch);
-mc.on("press", onPress);
+// mc.on("press pressup", onPress);
+mc.on("singletap", onTap);
 
 var interactingWithExistingCircle = false;
 var currentBall;
@@ -218,22 +223,68 @@ var text2 = new PointText({
 var group = new Group([text1,text2]);
 
 
-function onPress(ev) {
-	if(ev.type == 'press') {
+// function onPress(ev) {
+
+// 	if(ev.type == 'press') {
+//     // loop through the balls array
+// 	    for (var i = 0; i < balls.length; i++) {
+// 	      // check if the pinch point was in a circle
+// 	      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+// 	        currentBall = balls[i];
+// 	        currentBall.path.fillColor = 'blue';
+// 	        // tempWeight = currentBall.weight;
+// 	        // tempVector = currentBall.vector;
+// 	        // currentBall.weight = 0;
+// 	        // currentBall.vector = 0;
+// 	        interactingWithExistingCircle = true;
+// 	        console.log('presssed');
+// 	        break;
+// 	      }
+// 	    }
+// 	}
+
+// 	else if(ev.type == 'pressup') {
+//     // loop through the balls array
+// 	    for (var i = 0; i < balls.length; i++) {
+// 	      // check if the pinch point was in a circle
+// 	      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+// 	        currentBall = balls[i];
+// 	        currentBall.path.fillColor = 'red';
+// 	        // console.log(tempWeight);
+// 	        // currentBall.weight = tempWeight;
+// 	        // currentBall.vector = tempVector;
+// 	        interactingWithExistingCircle = true;
+// 	        console.log('pressup');
+// 	        break;
+// 	      }
+// 	    }
+// 	}
+
+// }
+
+function onTap(ev) {
+
+	if(ev.type == 'singletap') {
     // loop through the balls array
 	    for (var i = 0; i < balls.length; i++) {
 	      // check if the pinch point was in a circle
 	      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
 	        currentBall = balls[i];
 	        currentBall.path.fillColor = 'blue';
+	        // tempWeight = currentBall.weight;
+	        // tempVector = currentBall.vector;
+	        // currentBall.weight = 0;
+	        // currentBall.vector = 0;
 	        interactingWithExistingCircle = true;
-	        console.log('presssed');
+	        console.log('tapped');
+	        console.log(overlayDisplay);
 	        break;
 	      }
 	    }
 	}
 
 }
+
 function onPinch(ev) {
   // console.log(ev);
 
@@ -361,4 +412,11 @@ function inCircle(center_x, center_y, radius, x, y) {
   else {
     return false;
   }
+}
+
+
+// Text Input script currently in progress
+textEditSubmit = function() {
+   console.log(balls[0].textInput.content);
+   balls[0].textInput.content = "Test World";
 }

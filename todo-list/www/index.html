@@ -27,10 +27,12 @@
 
     <!-- hammer.js -->
     <script src="lib/hammer.js/hammer.min.js"></script>
+    
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
     <script type="text/paperscript" src="js/rainBalls.js" canvas="rainBalls"></script>
+
   </head>
   <body ng-app="starter">
 
@@ -40,6 +42,12 @@
       </ion-header-bar>
       <ion-content scroll="false">
         <!-- Test bed canvas for Rainbow Balls example "Candy Crash" -->
+        <div id="overlay">
+          <form id="textEdit">
+            Todo: <input type="text" name="todofield"><br>
+            <input type="button" onclick="textEditSubmit()" value="Submit form">
+          </form>
+        </div>
         <canvas id="rainBalls" resize></canvas>
       </ion-content>
     </ion-pane>
