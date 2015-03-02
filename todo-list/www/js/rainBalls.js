@@ -12,10 +12,7 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 
 mc.add(new Hammer.Pinch({ threshold: 0 }));
 
-var gravity = 0.1;
-
-// enable pinch gesture detection
-mc.get('pinch').set({ enable: true });
+var gravity = -0.1;
 
 function Ball(r, p, v, textInput) {
 	this.radius = r;
