@@ -195,6 +195,7 @@ var interactingWithExistingCircle = false;
 var currentBall;
 var tempWeight;
 var tempVector;
+var minRadius = 50;
 
 var text1 = new PointText({
 			point: [50,50],
@@ -280,13 +281,19 @@ function onPinch(ev) {
   else if (ev.type == 'pinchmove') {
     if (interactingWithExistingCircle) {
       currentBall.radius = ev.scale*50;
+      if (currentBall.radius < minRadius) {
+        currentBall.path.fillColor = 'orange';
+      }
+      else {
+        currentBall.path.fillColor = 'green';
+      }
     }
   }
 
   else if (ev.type == 'pinchend') {
     // remove the ball if it's too small
     if (currentBall) {
-      if (currentBall.radius < 50) {
+      if (currentBall.radius < minRadius) {
         var index = balls.indexOf(currentBall);
         currentBall.path.remove();
         currentBall.tempPath.remove();
@@ -343,6 +350,20 @@ function onPan(ev) {
   }
 
   else if (ev.type == 'panend') {
+    // remove the ball if it's too small
+    if (currentBall) {
+      if (currentBall.radius < minRadius) {
+        var index = balls.indexOf(currentBall);
+        currentBall.path.remove();
+        currentBall.tempPath.remove();
+        currentBall.textInput.remove();
+        // console.log('index: ' + index);
+        if (index > -1) {
+            balls.splice(index, 1);
+        }
+      }
+    }
+
     if (tempVector && tempWeight && currentBall) {
       currentBall.vector = tempVector;
       currentBall.weight = tempWeight;
