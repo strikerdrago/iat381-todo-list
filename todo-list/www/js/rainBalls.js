@@ -10,7 +10,9 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   ]
 });
 
-mc.add(new Hammer.Pinch({ threshold: 0 }));
+mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+mc.add(new Hammer.Rotate({ threshold: 0 })).recognizeWith(mc.get('pan'));
+mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan'), mc.get('rotate')]);
 
 var gravity = -0.1;
 
