@@ -13,8 +13,6 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
 mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
 
-var gravity = -0.1;
-
 function Ball(r, p, v, textInput) {
 	this.radius = r;
 	this.point = p;
@@ -24,6 +22,7 @@ function Ball(r, p, v, textInput) {
 	this.boundOffset = [];
 	this.boundOffsetBuff = [];
 	this.sidePoints = [];
+  this.weight = -0.1;
 
 	this.textInput = textInput;
 	this.path = new Path({
@@ -52,7 +51,7 @@ Ball.prototype = {
 		if (this.vector.length > this.maxVec)
 			this.vector.length = this.maxVec;
 		this.point += this.vector;
-    this.vector.y += gravity;
+    this.vector.y += this.weight;
 		this.updateShape();
 	},
 
