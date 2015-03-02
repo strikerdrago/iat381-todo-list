@@ -1,7 +1,7 @@
 // kynd.info 2014
 
 var hammertime = new Hammer(document.getElementById('rainBalls'));
-var gravity = 0.5;
+var gravity = 0.1;
 
 // enable pinch gesture detection
 hammertime.get('pinch').set({ enable: true });
@@ -134,7 +134,7 @@ Ball.prototype = {
 //--------------------- main ---------------------
 
 var balls = [];
-var numBalls = 3;
+// var numBalls = 3;
 // for (var i = 0; i < numBalls; i++) {
 // 	var position = Point.random() * view.size;
 // 	var vector = new Point({
@@ -149,9 +149,19 @@ var numBalls = 3;
 hammertime.on('pinchstart', function(ev) {
     console.log(ev);
 
+    for (var i = 0; i < balls.length - 1; i++) {
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+        // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
+        // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
+        balls[i].path.fillColor = 'black';
+      }
+    }
+
+    var radius = Math.random() * 60 + 60;
     var position = new Point(ev.center.x, ev.center.y);
+
     balls.push(new Ball(
-      Math.random() * 60 + 60,
+      radius,
       position,
       new Point({
         angle: 360 * Math.random(),
@@ -169,5 +179,27 @@ function onFrame() {
   }
   for (var i = 0, l = balls.length; i < l; i++) {
     balls[i].iterate();
+  }
+}
+
+function inCircle(center_x, center_y, radius, x, y) {
+  var dx = Math.abs(x-center_x);
+  var dy = Math.abs(y-center_y);
+  var R = radius;
+
+  if (dx>R) {
+    return false;
+  }
+  if (dy>R) {
+    return false;
+  }
+  if (dx + dy <= R) {
+    return true;
+  }
+  if (dx^2 + dy^2 <= R^2) {
+    return true;
+  }
+  else {
+    return false;
   }
 }
