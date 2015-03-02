@@ -284,6 +284,20 @@ function onPinch(ev) {
   }
 
   else if (ev.type == 'pinchend') {
+    // remove the ball if it's too small
+    if (currentBall) {
+      if (currentBall.radius < 50) {
+        var index = balls.indexOf(currentBall);
+        currentBall.path.remove();
+        currentBall.tempPath.remove();
+        currentBall.textInput.remove();
+        // console.log('index: ' + index);
+        if (index > -1) {
+            balls.splice(index, 1);
+        }
+      }
+    }
+
     if (tempVector && tempWeight && currentBall) {
       currentBall.vector = tempVector;
       currentBall.weight = tempWeight;
@@ -338,9 +352,6 @@ function onPan(ev) {
     interactingWithExistingCircle = false;
     currentBall = null;
   }
-}
-
-function onRotate(ev) {
 }
 
 function onFrame() {
