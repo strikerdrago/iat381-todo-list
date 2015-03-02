@@ -193,6 +193,9 @@ mc.on('pinchstart pinchmove pinchend', onPinch);
 
 var interactingWithExistingCircle = false;
 var currentBall;
+var tempWeight;
+var tempVector;
+
 var text1 = new PointText({
 			point: [50,50],
 			content: 'test',
@@ -226,6 +229,17 @@ function onPinch(ev) {
         currentBall = balls[i];
         currentBall.path.fillColor = 'black';
         interactingWithExistingCircle = true;
+        
+        // save the current weight and stuff
+        tempVector = currentBall.vector;
+        tempWeight = currentBall.weight;
+
+        // make the ball stop trying to move while being dragged or whatever
+        currentBall.vector = new Point({
+          angle: 0,
+          length: 0
+        });
+        currentBall.weight = 0;
         break;
       }
     }
@@ -240,7 +254,8 @@ function onPinch(ev) {
         new Point({
           angle: 360 * Math.random(),
           length: Math.random() * 10
-        }),new PointText({
+        }),
+        new PointText({
           fillColor: 'black',
           fontFamily: 'Courier New',
           fontWeight: 'bold',
@@ -269,6 +284,12 @@ function onPinch(ev) {
   }
 
   else if (ev.type == 'pinchend') {
+    if (tempVector && tempWeight && currentBall) {
+      console.log(tempVector);
+      console.log(tempWeight);
+      currentBall.vector = tempVector;
+      currentBall.weight = tempWeight;
+    }
     interactingWithExistingCircle = false;
     currentBall = null;
   }
@@ -283,6 +304,18 @@ function onPan(ev) {
         currentBall = balls[i];
         currentBall.path.fillColor = 'red';
         interactingWithExistingCircle = true;
+
+        // save the current weight and stuff
+        tempVector = currentBall.vector;
+        tempWeight = currentBall.weight;
+
+        // make the ball stop trying to move while being dragged or whatever
+        currentBall.vector = new Point({
+          angle: 0,
+          length: 0
+        });
+        currentBall.weight = 0;
+
         break;
       }
     }
@@ -296,6 +329,12 @@ function onPan(ev) {
   }
 
   else if (ev.type == 'panend') {
+    if (tempVector && tempWeight && currentBall) {
+      console.log(tempVector);
+      console.log(tempWeight);
+      currentBall.vector = tempVector;
+      currentBall.weight = tempWeight;
+    }
     interactingWithExistingCircle = false;
     currentBall = null;
   }
