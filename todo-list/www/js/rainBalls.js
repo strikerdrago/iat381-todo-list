@@ -223,7 +223,7 @@ function onPinch(ev) {
     // loop through the balls array
     for (var i = 0; i < balls.length; i++) {
       // check if the pinch point was in a circle
-      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle) {
         // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
         // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
         currentBall = balls[i];
@@ -285,11 +285,11 @@ function onPinch(ev) {
 
   else if (ev.type == 'pinchend') {
     if (tempVector && tempWeight && currentBall) {
-      console.log(tempVector);
-      console.log(tempWeight);
       currentBall.vector = tempVector;
       currentBall.weight = tempWeight;
     }
+    tempVector = null;
+    tempWeight = null;
     interactingWithExistingCircle = false;
     currentBall = null;
   }
@@ -300,7 +300,7 @@ function onPan(ev) {
     // loop through the balls array
     for (var i = 0; i < balls.length; i++) {
       // check if the pinch point was in a circle
-      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle) {
         currentBall = balls[i];
         currentBall.path.fillColor = 'red';
         interactingWithExistingCircle = true;
@@ -330,11 +330,11 @@ function onPan(ev) {
 
   else if (ev.type == 'panend') {
     if (tempVector && tempWeight && currentBall) {
-      console.log(tempVector);
-      console.log(tempWeight);
       currentBall.vector = tempVector;
       currentBall.weight = tempWeight;
     }
+    tempVector = null;
+    tempWeight = null;
     interactingWithExistingCircle = false;
     currentBall = null;
   }
