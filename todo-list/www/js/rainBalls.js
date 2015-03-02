@@ -154,37 +154,55 @@ var balls = [];
 // 	balls.push(new Ball(radius, position, vector));
 // }
 
-mc.on('pinchstart', function(ev) {
-  console.log(ev);
-  var pinchingExistingCircle = false;
+mc.on('pinchstart pinchmove pinchend', onPinch);
+var pinchingExistingCircle = false;
+var currentBall;
 
-  // loop through the balls array
-  for (var i = 0; i < balls.length - 1; i++) {
-    // check if the pinch point was in a circle
-    if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
-      // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
-      // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
-      balls[i].path.fillColor = 'black';
-      pinchingExistingCircle = true;
+function onPinch(ev) {
+  // console.log(ev);
+
+  if(ev.type == 'pinchstart') {
+    // loop through the balls array
+    for (var i = 0; i < balls.length - 1; i++) {
+      // check if the pinch point was in a circle
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+        // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
+        // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
+        currentBall = balls[i];
+        currentBall.path.fillColor = 'black';
+        pinchingExistingCircle = true;
+        break;
+      }
+    }
+
+    // if not pinching in an existing circle
+    if (!pinchingExistingCircle) {
+      var radius = Math.random() * 60 + 60;
+      var position = new Point(ev.center.x, ev.center.y);
+
+      balls.push(new Ball(
+        radius,
+        position,
+        new Point({
+          angle: 360 * Math.random(),
+          length: Math.random() * 10
+        }),
+        'derp'
+      ));
     }
   }
 
-  // if not pinching in an existing circle
-  if (!pinchingExistingCircle) {
-    var radius = Math.random() * 60 + 60;
-    var position = new Point(ev.center.x, ev.center.y);
-
-    balls.push(new Ball(
-      radius,
-      position,
-      new Point({
-        angle: 360 * Math.random(),
-        length: Math.random() * 10
-      }),
-      'derp'
-    ));
+  else if (ev.type == 'pinchmove') {
+    if (pinchingExistingCircle) {
+      currentBall.radius = ev.scale*50;
+    }
   }
-});
+
+  else if (ev.type == 'pinchend') {
+    pinchingExistingCircle = false;
+    currentBall = null;
+  }
+}
 
 function onFrame() {
   for (var i = 0; i < balls.length - 1; i++) {
