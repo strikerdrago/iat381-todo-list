@@ -12,6 +12,10 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
 mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
+mc.add( new Hammer.Press({ event: 'press' }) );
+
+
+
 
 function Ball(r, p, v, textInput) {
 	this.radius = r;
@@ -190,6 +194,7 @@ var balls = [];
 // }
 mc.on("panstart panmove panend", onPan);
 mc.on('pinchstart pinchmove pinchend', onPinch);
+mc.on("press", onPress);
 
 var interactingWithExistingCircle = false;
 var currentBall;
@@ -212,6 +217,23 @@ var text2 = new PointText({
     });
 var group = new Group([text1,text2]);
 
+
+function onPress(ev) {
+	if(ev.type == 'press') {
+    // loop through the balls array
+	    for (var i = 0; i < balls.length; i++) {
+	      // check if the pinch point was in a circle
+	      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+	        currentBall = balls[i];
+	        currentBall.path.fillColor = 'blue';
+	        interactingWithExistingCircle = true;
+	        console.log('presssed');
+	        break;
+	      }
+	    }
+	}
+
+}
 function onPinch(ev) {
   // console.log(ev);
 
