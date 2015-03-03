@@ -26,6 +26,17 @@
   -webkit-transform: translateZ(0px);
           transform: translateZ(0px);
 }
+#todolist{
+	position: relative;
+	width: 95%;
+	top: 20%;
+	/*left:10%;*/
+	/*right:10%;*/
+	/*margin-right: 40px;*/
+	/*margin-left: 0;*/
+	/*right:0;*/
+	/*padding-right: 10px;*/
+}
 
 #noitemstext{
 	width: 100%;

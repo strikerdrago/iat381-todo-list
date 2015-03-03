@@ -46,13 +46,20 @@
           pinch to create a todo
         </div>
         <div id="overlay" class="hidden">
-            <div id="textEdit" class="list">
-            <!-- Todo: <input type="text" id="todofield"><br> -->
-              <label class="item item-input">
-                <input type="text" placeholder="To-do" id="todofield">
-              </label>
-              <button class="button button-full button-positive" type="button" onclick="textEditSubmit()" value="Submit form">Save</button>
+          <div class="list list-inset" id="todolist">
+            <form id="textEdit">
+            <div class="item item-text-wrap">
+              <span class="input-label">Todo: </span>
+              <input type="text" id="todofield" placeholder="type text here">
             </div>
+            <div class="item item-text-wrap">
+              <button class="button button-positive" onclick="textEditSubmit()">Submit</button>
+            </div>
+            
+            
+            </form>
+          </div>
+          
         </div>
         <canvas id="rainBalls" resize></canvas>
       </ion-content>
