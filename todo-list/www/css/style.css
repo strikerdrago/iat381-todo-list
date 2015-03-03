@@ -12,13 +12,15 @@
 	background-color: gray;
 	/*display: none;*/
 	position: absolute;
-  -webkit-transition: opacity 0.2s, -webkit-transform 0.2s;  /* For Safari 3.1 to 6.0 */
-          transition: opacity 0.2s, transform 0.2s;
+  border-radius: 100%;
+  -webkit-transition: opacity 0.2s, border-radius 0.2s, -webkit-transform 0.2s;  /* For Safari 3.1 to 6.0 */
+          transition: opacity 0.2s, border-radius 0.2s, transform 0.2s;
   -webkit-transform: translateZ(-500px);
           transform: translateZ(-500px);
 }
 
 #overlay.shown {
+  border-radius: 0;
   height: 100%;
   opacity: 1;
   -webkit-transform: translateZ(0px);

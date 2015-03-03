@@ -497,6 +497,8 @@ tappedTodo = function(){
 	// console.log(overlay.style.display);
 	// overlay.style.display = "block";
   $( "#overlay" ).toggleClass( "shown" );
+  // console.log("hsl("+balls[ballIndex].path.fillColor.hue+", 100%, 50%)");
+  $( "#overlay" ).css("background-color", "hsl("+balls[ballIndex].path.fillColor.hue+", 75%, 50%)");
 }
 
 // Text Input script currently in progress
