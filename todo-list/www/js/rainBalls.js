@@ -495,7 +495,8 @@ tappedTodo = function(){
 	tempContent = balls[ballIndex].textInput.content;
 	todofield.value = tempContent;
 	// console.log(overlay.style.display);
-	overlay.style.display = "block";
+	// overlay.style.display = "block";
+  $( "#overlay" ).toggleClass( "shown" );
 }
 
 // Text Input script currently in progress
@@ -509,5 +510,6 @@ textEditSubmit = function() {
 	tapped = false;
 	interactingWithExistingCircle = false;
 	balls[ballIndex].textInput.content = todofield.value;
-	overlay.style.display = "none";
+	// overlay.style.display = "none";
+  $( "#overlay" ).toggleClass( "shown" );
 }

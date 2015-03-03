@@ -19,6 +19,9 @@
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
+    <!-- jquery -->
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
@@ -27,7 +30,7 @@
 
     <!-- hammer.js -->
     <script src="lib/hammer.js/hammer.min.js"></script>
-    
+
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
@@ -37,9 +40,9 @@
   <body ng-app="starter">
 
     <ion-pane>
-      <ion-content scroll="false">
+      <ion-content scroll="false" id="content-container">
         <!-- Test bed canvas for Rainbow Balls example "Candy Crash" -->
-        <div id="overlay">
+        <div id="overlay" class="hidden">
           <form id="textEdit">
             <div id="textEdit" class="list">
             <!-- Todo: <input type="text" id="todofield"><br> -->
