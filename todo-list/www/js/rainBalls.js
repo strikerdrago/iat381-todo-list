@@ -504,6 +504,7 @@ tappedTodo = function(){
 	// console.log(overlay.style.display);
 	// overlay.style.display = "block";
   $( "#overlay" ).toggleClass( "shown" );
+  $( "#todolist" ).show();
   // console.log("hsl("+balls[ballIndex].path.fillColor.hue+", 100%, 50%)");
   $( "#overlay" ).css("background-color", "hsl("+balls[ballIndex].path.fillColor.hue+", 75%, 50%)");
 }
@@ -521,4 +522,5 @@ textEditSubmit = function() {
 	balls[ballIndex].textInput.content = todofield.value;
 	// overlay.style.display = "none";
   $( "#overlay" ).toggleClass( "shown" );
+  $( "#todolist" ).hide();
 }
