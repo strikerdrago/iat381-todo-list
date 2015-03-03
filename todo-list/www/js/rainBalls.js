@@ -72,7 +72,7 @@ Ball.prototype = {
 		this.point += this.vector;
     this.vector.y += this.weight;
 		this.textInput.point = this.point;
-		this.textInput.point.x -= this.radius - 5;
+		this.textInput.point.x -= this.radius - 10;
     this.textInput.point.y += 10;
 		this.updateShape();
 	},
@@ -82,22 +82,22 @@ Ball.prototype = {
 
 		if (this.point.x < this.radius) {
 			this.point.x = this.radius;
-      this.vector.angle = 180-this.vector.angle;
+      // this.vector.angle = 180-this.vector.angle;
     }
 
 		if (this.point.x > size.width - this.radius) {
 			this.point.x = size.width - this.radius;
-      this.vector.angle = 180-this.vector.angle;
+      // this.vector.angle = 180-this.vector.angle;
     }
 
 		if (this.point.y < this.radius) {
 			this.point.y = this.radius;
-      this.vector.angle = -this.vector.angle;
+      // this.vector.angle = -this.vector.angle;
     }
 
 		if (this.point.y > size.height - this.radius) {
 			this.point.y = size.height - this.radius;
-      this.vector.angle = -this.vector.angle;
+      // this.vector.angle = -this.vector.angle;
     }
 	},
 
