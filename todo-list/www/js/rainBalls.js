@@ -25,7 +25,7 @@ function Ball(r, p, v, textInput) {
 	this.boundOffset = [];
 	this.boundOffsetBuff = [];
 	this.sidePoints = [];
-  	this.weight = -0.1;
+  this.weight = -0.1;
 
 
 	// this.textInput = textInput;
@@ -201,7 +201,8 @@ var creatingCircle = false;
 var currentBall;
 var tempWeight;
 var tempVector;
-var minRadius = 50;
+var minRadius = 60;
+var maxRadius = 120;
 
 var overlay = document.getElementById("overlay");
 var overlayDisplay = document.getElementById("overlay").style.display;
@@ -303,6 +304,11 @@ function onPinch(ev) {
       if (currentBall.radius < minRadius) {
         currentBall.path.fillColor = 'orange';
         creatingCircle = false;
+      }
+      else if (currentBall.radius > maxRadius) {
+        // currentBall.path.fillColor = 'green';
+        currentBall.radius = maxRadius;
+        currentBall.path.fillColor = 'green';
       }
       else {
         currentBall.path.fillColor = 'green';
