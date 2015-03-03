@@ -351,7 +351,13 @@ function onPinch(ev) {
 
     if (creatingCircle) {
       creatingCircle = false;
-      if (currentBall.radius > minRadius) {
+      if (currentBall) {
+        if (currentBall.radius > minRadius) {
+          tapped = true;
+          tappedTodo();
+        }
+      }
+      else {
         tapped = true;
         tappedTodo();
       }
@@ -419,7 +425,13 @@ function onPan(ev) {
 
     if (creatingCircle) {
       creatingCircle = false;
-      if (currentBall.radius > minRadius) {
+      if (currentBall) {
+        if (currentBall.radius > minRadius) {
+          tapped = true;
+          tappedTodo();
+        }
+      }
+      else {
         tapped = true;
         tappedTodo();
       }
