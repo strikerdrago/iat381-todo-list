@@ -12,6 +12,9 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
 mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
+mc.add( new Hammer.Press({ time: '200' }) );
+mc.add( new Hammer.Tap({ event: 'singletap' }) );
+
 
 function Ball(r, p, v, textInput) {
 	this.radius = r;
@@ -22,7 +25,7 @@ function Ball(r, p, v, textInput) {
 	this.boundOffset = [];
 	this.boundOffsetBuff = [];
 	this.sidePoints = [];
-  this.weight = -0.1;
+  	this.weight = -0.1;
 
 
 	// this.textInput = textInput;
@@ -190,6 +193,8 @@ var balls = [];
 // }
 mc.on("panstart panmove panend", onPan);
 mc.on('pinchstart pinchmove pinchend', onPinch);
+// mc.on("press pressup", onPress);
+mc.on("singletap", onTap);
 
 var interactingWithExistingCircle = false;
 var currentBall;
@@ -197,24 +202,31 @@ var tempWeight;
 var tempVector;
 var minRadius = 50;
 
-var text1 = new PointText({
-			point: [50,50],
-			content: 'test',
-		    fillColor: 'black',
-		    fontFamily: 'Courier New',
-		    fontWeight: 'bold',
-		    fontSize: 25
-		});
+var overlay = document.getElementById("overlay");
+var overlayDisplay = document.getElementById("overlay").style.display;
+var todofield = document.getElementById("todofield");
 
-var text2 = new PointText({
-      point: [50,75],
-      content: 'super long testing thing',
-        fillColor: 'black',
-        fontFamily: 'Courier New',
-        fontWeight: 'bold',
-        fontSize: 25
-    });
-var group = new Group([text1,text2]);
+var tapped = false;
+
+function onTap(ev) {
+
+	if(ev.type == 'singletap') {
+    // loop through the balls array
+	    for (var i = 0; i < balls.length; i++) {
+	      // check if the pinch point was in a circle
+	      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+	        currentBall = balls[i];
+	        currentBall.path.fillColor = 'blue';
+	        interactingWithExistingCircle = true;
+	        currentBallIndex = balls.indexOf(currentBall);
+	        tapped = true;
+	        tappedTodo();
+	        break;
+	      }
+	    }
+	}
+
+}
 
 function onPinch(ev) {
   // console.log(ev);
@@ -258,11 +270,16 @@ function onPinch(ev) {
         }),
         new PointText({
           fillColor: 'black',
-          fontFamily: 'Courier New',
+          fontFamily: 'Open Sans',
           fontWeight: 'bold',
           fontSize: 25
       }));
       balls.push(tempBall);
+      
+
+      currentBallIndex = balls.indexOf(tempBall);
+      tapped = true;
+      tappedTodo();
       // var tempGroup = new Group([text1,text2]);
       // tempGroup.position += 50;
 
@@ -376,14 +393,16 @@ function onPan(ev) {
 }
 
 function onFrame() {
-  for (var i = 0; i < balls.length - 1; i++) {
-    for (var j = i + 1; j < balls.length; j++) {
-    balls[i].react(balls[j]);
-    }
-  }
-  for (var i = 0, l = balls.length; i < l; i++) {
-    balls[i].iterate();
-  }
+	if (!tapped){
+	  for (var i = 0; i < balls.length - 1; i++) {
+	    for (var j = i + 1; j < balls.length; j++) {
+	    balls[i].react(balls[j]);
+	    }
+	  }
+	  for (var i = 0, l = balls.length; i < l; i++) {
+	    balls[i].iterate();
+	  }
+	}
 }
 
 // function to check if a point is inside a circle
@@ -410,4 +429,29 @@ function inCircle(center_x, center_y, radius, x, y) {
   else {
     return false;
   }
+}
+
+tappedTodo = function(){
+	var ballIndex = currentBallIndex;
+	var tempContent = "";
+
+	console.log(balls[ballIndex].textInput.content);
+	tempContent = balls[ballIndex].textInput.content;
+	todofield.value = tempContent;
+	// console.log(overlay.style.display);
+	overlay.style.display = "block";
+}
+
+// Text Input script currently in progress
+textEditSubmit = function() {
+	var ballIndex = currentBallIndex;
+	console.log(ballIndex);
+	if (balls.length > 0) {
+	   // console.log(balls[ballIndex].textInput.content);
+	   // tempContent = balls[ballIndex].textInput.content;
+	}
+	tapped = false;
+	interactingWithExistingCircle = false;
+	balls[ballIndex].textInput.content = todofield.value;
+	overlay.style.display = "none";
 }
