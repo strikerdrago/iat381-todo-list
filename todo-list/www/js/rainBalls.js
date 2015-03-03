@@ -207,6 +207,7 @@ var maxRadius = 120;
 var tempText = '';
 var overlay = document.getElementById("overlay");
 var overlayDisplay = document.getElementById("overlay").style.display;
+var noitemsoverlay = document.getElementById("noitemstext");
 var todofield = document.getElementById("todofield");
 
 var tapped = false;
@@ -458,6 +459,12 @@ function onFrame() {
 	  for (var i = 0, l = balls.length; i < l; i++) {
 	    balls[i].iterate();
 	  }
+	}
+	
+	if (balls.length != 0){
+		noitemsoverlay.style.display = "none";
+	} else {
+		noitemsoverlay.style.display = "block";
 	}
 }
 

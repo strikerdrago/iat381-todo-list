@@ -42,8 +42,10 @@
     <ion-pane>
       <ion-content scroll="false" id="content-container">
         <!-- Test bed canvas for Rainbow Balls example "Candy Crash" -->
+        <div id="noitemstext">
+          pinch to create a todo
+        </div>
         <div id="overlay" class="hidden">
-          <form id="textEdit">
             <div id="textEdit" class="list">
             <!-- Todo: <input type="text" id="todofield"><br> -->
               <label class="item item-input">
@@ -51,7 +53,6 @@
               </label>
               <button class="button button-full button-positive" type="button" onclick="textEditSubmit()" value="Submit form">Save</button>
             </div>
-          </form>
         </div>
         <canvas id="rainBalls" resize></canvas>
       </ion-content>
