@@ -73,6 +73,7 @@ Ball.prototype = {
     this.vector.y += this.weight;
 		this.textInput.point = this.point;
 		this.textInput.point.x -= this.radius - 5;
+    this.textInput.point.y += 10;
 		this.updateShape();
 	},
 
@@ -218,7 +219,7 @@ function onTap(ev) {
 	      // check if the pinch point was in a circle
 	      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
 	        currentBall = balls[i];
-	        currentBall.path.fillColor = 'blue';
+	        // currentBall.path.fillColor = 'blue';
 	        interactingWithExistingCircle = true;
 	        currentBallIndex = balls.indexOf(currentBall);
 	        tapped = true;
@@ -242,7 +243,7 @@ function onPinch(ev) {
         // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
         // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
         currentBall = balls[i];
-        currentBall.path.fillColor = 'black';
+        // currentBall.path.fillColor = 'black';
         interactingWithExistingCircle = true;
         
         // save the current weight and stuff
@@ -272,7 +273,7 @@ function onPinch(ev) {
           length: Math.random() * 10
         }),
         new PointText({
-          fillColor: 'black',
+          fillColor: '#333333',
           fontFamily: 'Open Sans',
           fontWeight: 'bold',
           fontSize: 25
@@ -311,7 +312,8 @@ function onPinch(ev) {
         currentBall.path.fillColor = 'green';
       }
       else {
-        currentBall.path.fillColor = 'green';
+        console.log(String(Math.round((currentBall.radius/120)*360)));
+        currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
       }
     }
   }
@@ -341,6 +343,7 @@ function onPinch(ev) {
       currentBall.vector = tempVector;
       currentBall.weight = tempWeight;
     }
+
     tempVector = null;
     tempWeight = null;
     interactingWithExistingCircle = false;
@@ -355,7 +358,7 @@ function onPan(ev) {
       // check if the pinch point was in a circle
       if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle) {
         currentBall = balls[i];
-        currentBall.path.fillColor = 'red';
+        // currentBall.path.fillColor = 'red';
         interactingWithExistingCircle = true;
 
         // save the current weight and stuff
