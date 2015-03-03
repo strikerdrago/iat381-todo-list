@@ -35,11 +35,11 @@ function Ball(r, p, v, textInput) {
 	// console.log(textInput);
 	this.path = new Path({
 		fillColor: {
-			hue: 100,//Math.random() * 360,
+			hue: Math.round((this.radius/120)*360),//Math.random() * 360,
 			saturation: 1,
 			brightness: 1
-		},
-		blendMode: 'screen'
+		}//,
+		// blendMode: 'screen'
 	});
 
 	for (var i = 0; i < this.numSegment; i ++) {
@@ -55,7 +55,7 @@ function Ball(r, p, v, textInput) {
 	
 	this.textInput = textInput;
 	this.textInput.justification = 'left';
-	this.textInput.content = "Hello World";
+	this.textInput.content = "";
 	this.textInput.bringToFront();
 	this.textInput.position.x -= this.radius;
 
@@ -204,7 +204,7 @@ var tempWeight;
 var tempVector;
 var minRadius = 60;
 var maxRadius = 120;
-
+var tempText = '';
 var overlay = document.getElementById("overlay");
 var overlayDisplay = document.getElementById("overlay").style.display;
 var todofield = document.getElementById("todofield");
@@ -245,7 +245,8 @@ function onPinch(ev) {
         currentBall = balls[i];
         // currentBall.path.fillColor = 'black';
         interactingWithExistingCircle = true;
-        
+        tempText = currentBall.textInput.content;
+
         // save the current weight and stuff
         tempVector = currentBall.vector;
         tempWeight = currentBall.weight;
@@ -273,13 +274,14 @@ function onPinch(ev) {
           length: Math.random() * 10
         }),
         new PointText({
-          fillColor: '#333333',
+          fillColor: '#ffffff',
           fontFamily: 'Open Sans',
           fontWeight: 'bold',
-          fontSize: 25
+          fontSize: 18
       }));
       balls.push(tempBall);
-      
+      tempText = tempBall.textInput.content;
+
 
       currentBallIndex = balls.indexOf(tempBall);
       // tapped = true;
@@ -302,18 +304,32 @@ function onPinch(ev) {
   else if (ev.type == 'pinchmove') {
     if (interactingWithExistingCircle) {
       currentBall.radius = ev.scale*50;
+
       if (currentBall.radius < minRadius) {
-        currentBall.path.fillColor = 'orange';
-        creatingCircle = false;
+        currentBall.path.fillColor = '#ff0000';
+        currentBall.textInput.content = 'DELETE!';
       }
+
       else if (currentBall.radius > maxRadius) {
         // currentBall.path.fillColor = 'green';
         currentBall.radius = maxRadius;
-        currentBall.path.fillColor = 'green';
+        currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
+        if (!creatingCircle) {
+          currentBall.textInput.content = tempText;
+        }
+        else {
+          currentBall.textInput.content = tempText;
+        }
       }
       else {
-        console.log(String(Math.round((currentBall.radius/120)*360)));
+        // console.log(String(Math.round((currentBall.radius/120)*360)+50));
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
+        if (!creatingCircle) {
+          currentBall.textInput.content = tempText;
+        }
+        else {
+          currentBall.textInput.content = tempText;
+        }
       }
     }
   }
@@ -334,9 +350,11 @@ function onPinch(ev) {
     }
 
     if (creatingCircle) {
-      tapped = true;
-      tappedTodo();
       creatingCircle = false;
+      if (currentBall.radius > minRadius) {
+        tapped = true;
+        tappedTodo();
+      }
     }
 
     if (tempVector && tempWeight && currentBall) {
@@ -400,9 +418,11 @@ function onPan(ev) {
     }
 
     if (creatingCircle) {
-      tapped = true;
-      tappedTodo();
       creatingCircle = false;
+      if (currentBall.radius > minRadius) {
+        tapped = true;
+        tappedTodo();
+      }
     }
 
     if (tempVector && tempWeight && currentBall) {
