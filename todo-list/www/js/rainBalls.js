@@ -197,6 +197,7 @@ mc.on('pinchstart pinchmove pinchend', onPinch);
 mc.on("singletap", onTap);
 
 var interactingWithExistingCircle = false;
+var creatingCircle = false;
 var currentBall;
 var tempWeight;
 var tempVector;
@@ -259,6 +260,7 @@ function onPinch(ev) {
 
     // if not pinching in an existing circle
     if (!interactingWithExistingCircle) {
+      creatingCircle = true;
       var radius = Math.random() * 60 + 60;
       var position = new Point(ev.center.x, ev.center.y);
       var tempBall = new Ball(
@@ -278,8 +280,8 @@ function onPinch(ev) {
       
 
       currentBallIndex = balls.indexOf(tempBall);
-      tapped = true;
-      tappedTodo();
+      // tapped = true;
+      // tappedTodo();
       // var tempGroup = new Group([text1,text2]);
       // tempGroup.position += 50;
 
@@ -300,6 +302,7 @@ function onPinch(ev) {
       currentBall.radius = ev.scale*50;
       if (currentBall.radius < minRadius) {
         currentBall.path.fillColor = 'orange';
+        creatingCircle = false;
       }
       else {
         currentBall.path.fillColor = 'green';
@@ -320,6 +323,12 @@ function onPinch(ev) {
             balls.splice(index, 1);
         }
       }
+    }
+
+    if (creatingCircle) {
+      tapped = true;
+      tappedTodo();
+      creatingCircle = false;
     }
 
     if (tempVector && tempWeight && currentBall) {
@@ -379,6 +388,12 @@ function onPan(ev) {
             balls.splice(index, 1);
         }
       }
+    }
+
+    if (creatingCircle) {
+      tapped = true;
+      tappedTodo();
+      creatingCircle = false;
     }
 
     if (tempVector && tempWeight && currentBall) {
