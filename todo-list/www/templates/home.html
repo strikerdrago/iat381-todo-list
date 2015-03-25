@@ -1,4 +1,4 @@
-<ion-view view-title="home">
+<ion-view view-title="home" id="home">
   <ion-pane>
       <ion-header-bar class="bar-stable">
         <h1 class="title">ToDo</h1>
@@ -11,10 +11,11 @@
           pinch to create a todo
 
         </div>
-        
+        <canvas id="rainBalls" resize></canvas>
+         <button ng-click="changeState()">Home</button>
 
         
-        <div id="overlay">
+<!--         <div id="overlay">
           <div class="list list-inset" id="todolist">
             <form id="textEdit">
             <div class="item item-text-wrap">
@@ -29,7 +30,7 @@
             </form>
           </div>
           
-        </div>
+        </div> -->
         
 
       </ion-content>

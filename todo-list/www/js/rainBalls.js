@@ -1,4 +1,8 @@
 // kynd.info 2014
+// window.onload = function() {
+//   console.log("loaded!");
+// }
+// paper.setup(document.getElementById('rainBalls'));
 
 var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   {
@@ -202,10 +206,7 @@ var tempWeight;
 var tempVector;
 var minRadius = 50;
 
-var overlay = document.getElementById("overlay");
-var overlayDisplay = document.getElementById("overlay").style.display;
-var noitemsoverlay = document.getElementById("noitemstext");
-var todofield = document.getElementById("todofield");
+
 
 var tapped = false;
 
@@ -405,11 +406,11 @@ function onFrame() {
 	  }
 	}
 	
-	if (balls.length != 0){
-		noitemsoverlay.style.display = "none";
-	} else {
-		noitemsoverlay.style.display = "block";
-	}
+	// if (balls.length != 0){
+	// 	noitemsoverlay.style.display = "none";
+	// } else {
+	// 	noitemsoverlay.style.display = "block";
+	// }
 }
 
 // function to check if a point is inside a circle
@@ -438,15 +439,22 @@ function inCircle(center_x, center_y, radius, x, y) {
   }
 }
 
+// var overlay = document.getElementById("overlay");
+// var overlayDisplay = document.getElementById("overlay").style.display;
+// var noitemsoverlay = document.getElementById("noitemstext");
+// var todofield = document.getElementById("todofield");
+
 tappedTodo = function(){
 	var ballIndex = currentBallIndex;
 	var tempContent = "";
 
 	console.log(balls[ballIndex].textInput.content);
 	tempContent = balls[ballIndex].textInput.content;
-	todofield.value = tempContent;
+	// todofield.value = tempContent;
 	// console.log(overlay.style.display);
-	overlay.style.display = "block";
+	// overlay.style.display = "block";
+  // angular.element(document.getElementById('home')).scope().changeState();
+  textEditSubmit ();
 }
 
 // Text Input script currently in progress
@@ -459,6 +467,8 @@ textEditSubmit = function() {
 	}
 	tapped = false;
 	interactingWithExistingCircle = false;
-	balls[ballIndex].textInput.content = todofield.value;
-	overlay.style.display = "none";
+  balls[ballIndex].textInput.content = "yeahhh";
+
+	// balls[ballIndex].textInput.content = todofield.value;
+	// overlay.style.display = "none";
 }
