@@ -7,6 +7,7 @@
   "dependencies": {
     "hammer.js": "~2.0.4",
     "paper": "~0.9.21",
-    "hammer-touchemulator": "~0.0.2"
+    "hammer-touchemulator": "~0.0.2",
+    "jquery": "~2.1.3"
   }
 }
