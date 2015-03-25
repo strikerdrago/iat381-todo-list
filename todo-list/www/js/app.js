@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'starter.controllers'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -17,3 +17,65 @@ angular.module('starter', ['ionic'])
     }
   });
 })
+
+.config(function($stateProvider, $urlRouterProvider) {
+
+  // Ionic uses AngularUI Router which uses the concept of states
+  // Learn more here: https://github.com/angular-ui/ui-router
+  // Set up the various states which the app can be in.
+  // Each state's controller can be found in controllers.js
+  $stateProvider
+
+  // Each tab has its own nav history stack:
+
+  .state('home', {
+    url: '/',
+    // template: '<p>Hello World</p>'
+    templateUrl: 'templates/home.html',
+    controller: 'HomeCtrl'
+  })
+
+  .state('edit', {
+    url: '/edit',
+    // template: '<p>Hello World</p>'
+    templateUrl: 'templates/edit.html',
+    controller: 'EditCtrl'
+  });
+
+
+  
+  // .state('tab.favorites', {
+  //   url: '/favorites',
+  //   views: {
+  //     'tab-favorites': {
+  //       templateUrl: 'templates/tab-favorites.html',
+  //       controller: 'HomeCtrl'
+  //     }
+  //   }
+  // })
+
+  // .state('tab.links', {
+  //     url: '/links',
+  //     views: {
+  //       'tab-links': {
+  //         templateUrl: 'templates/tab-links.html',
+  //         controller: 'LinksCtrl'
+  //       }
+  //     }
+  //   })
+
+
+  // .state('tab.about', {
+  //   url: '/about',
+  //   views: {
+  //     'tab-about': {
+  //       templateUrl: 'templates/tab-about.html',
+  //       controller: 'AboutCtrl'
+  //     }
+  //   }
+  // })  ;
+
+  // if none of the above states are matched, use this as the fallback
+  $urlRouterProvider.otherwise('/');
+
+});
