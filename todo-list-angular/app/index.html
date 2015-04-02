@@ -53,14 +53,16 @@
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/paper/dist/paper-full.js"></script>
     <script src="bower_components/hammer.js/hammer.js"></script>
+    <script src="bower_components/hammer-touchemulator/touch-emulator.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/about.js"></script>
-        <script src="scripts/rainBalls.js"></script>
-        <!-- endbuild -->
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/about.js"></script>
+    <script src="scripts/rainBalls.js"></script>
+    <script> TouchEmulator(); </script>
+    <!-- endbuild -->
 </body>
 </html>
