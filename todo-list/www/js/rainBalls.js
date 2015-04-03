@@ -1,5 +1,6 @@
 // kynd.info 2014
 
+
 var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   {
   recognizers: [
