@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="true" />
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
@@ -18,7 +19,27 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-
+    <!-- Test bed canvas for Rainbow Balls example "Candy Crash" -->
+    <div id="noitemstext">
+      pinch to create a todo
+    </div>
+    <div id="overlay" class="hidden">
+      <div class="list list-inset" id="todolist">
+        <form id="textEdit">
+        <div class="item item-text-wrap">
+          <span class="input-label">Todo: </span>
+          <input type="text" id="todofield" placeholder="type text here">
+        </div>
+        <div class="item item-text-wrap">
+          <button class="button button-positive" onclick="textEditSubmit()">Submit</button>
+        </div>
+        
+        
+        </form>
+      </div>
+      
+    </div>
+    <canvas id="rainBalls" resize></canvas>
     <!-- Add your site or application content here -->
       <div ng-view=""></div>
 
@@ -60,8 +81,7 @@
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/about.js"></script>
-    <script src="scripts/rainBalls.js"></script>
-    <script> TouchEmulator(); </script>
+    <script type="text/paperscript" src="scripts/rainBalls.js" canvas="rainBalls"></script>
     <!-- endbuild -->
 </body>
 </html>
