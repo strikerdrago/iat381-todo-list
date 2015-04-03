@@ -21,6 +21,7 @@ angular.module('todoListAngularApp')
     var hammertime = new Hammer(document.getElementById('rainBalls'));
     hammertime.on('pan', function(ev) {
         console.log(ev);
+        alert('HUHAHAHA');
     });
 
     init();
