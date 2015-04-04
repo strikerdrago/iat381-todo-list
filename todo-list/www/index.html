@@ -39,13 +39,16 @@
 
   </head>
   <body ng-app="starter">
-    <ion-nav-view></ion-nav-view>
+    <!-- <ion-nav-view></ion-nav-view> -->
     <ion-pane>
+
       <ion-content scroll="false" id="content-container">
+      
         <!-- Test bed canvas for Rainbow Balls example "Candy Crash" -->
         <div id="noitemstext">
           pinch to create a todo
         </div>
+
         <div id="overlay" class="hidden">
           <div class="list list-inset" id="todolist">
             <form id="textEdit">
@@ -62,8 +65,8 @@
           </div>
           
         </div>
-<!--         <canvas id="rainBalls" resize></canvas>
- -->      </ion-content>
+        <canvas id="rainBalls" resize></canvas>
+      </ion-content>
     </ion-pane>
   </body>
 </html>

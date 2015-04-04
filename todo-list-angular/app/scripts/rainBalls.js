@@ -1,4 +1,23 @@
 // kynd.info 2014
+var dbName = 'dbtest' + Date.now();
+ 
+sklad.open(dbName, {
+    version: 2,
+    migration: {
+        '1': function (database) {
+            // This migration part starts when your code runs first time in the browser.
+            // This is a migration from "didn't exist" to "1" database version
+            var objStore = database.createObjectStore('users', {autoIncrement: true});
+            objStore.createIndex('email_search', 'email', {unique: true});
+            objStore.createIndex('name_search', 'firstname');
+        },
+        '2': function (database) {
+            // This migration part starts when your database migrates from "1" to "2" version
+            var objStore = database.createObjectStore('foo_obj_store', {keyPath: 'foo'});
+        }
+    }
+}, function (err, conn) {
+
 
 var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   {
@@ -232,6 +251,8 @@ var tapped = false;
 
 function onTap(ev) {
 
+  testAdd();
+  updateRows();
   if(ev.type == 'singletap') {
     // loop through the balls array
       for (var i = 0; i < balls.length; i++) {
@@ -519,3 +540,37 @@ textEditSubmit = function() {
   $( "#overlay" ).toggleClass( "shown" );
   $( "#todolist" ).hide();
 }
+
+
+    var words = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'.split(' ');
+    var data = {
+        users: [
+            {email: 'example1@gmail.com', firstname: 'John'},
+            {email: 'example2@gmail.com', firstname: 'Jack'},
+            {email: 'example3@gmail.com', firstname: 'Peter'},
+        ],
+        foo_obj_store: words.map(function (word) { return {foo: word}; })
+    };
+    
+    testAdd = function() {conn.insert(data, function (err, insertedKeys) {
+        if (err) {
+            throw new Error(err.message);
+        }
+        
+        // insertedKeys is object with information about inserted keys
+    });}
+
+     function updateRows() {
+      conn
+        .get({
+          users: {direction: sklad.DESC, index: 'name_search'}
+        }, function (err, data) {
+          if (err) { return console.error(err); }
+          
+          console.log(data.users);
+          for(var user in data.users){
+            console.log(data.users[user].key);
+          }
+        });
+    }
+});
