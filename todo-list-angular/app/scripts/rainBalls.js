@@ -39,7 +39,7 @@ function Ball(r, p, v, textInput) {
   this.point = p;
   this.vector = v;
   this.maxVec = 2;
-  this.numSegment = Math.floor(r / 4 + 2);
+  this.numSegment = 8;//Math.floor(r / 3 + 2);
   this.boundOffset = [];
   this.boundOffsetBuff = [];
   this.sidePoints = [];
@@ -236,7 +236,7 @@ function onTap(ev) {
     // loop through the balls array
       for (var i = 0; i < balls.length; i++) {
         // check if the pinch point was in a circle
-        if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y)) {
+        if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y + paper.view.bounds.y)) {
           currentBall = balls[i];
           // currentBall.path.fillColor = 'blue';
           interactingWithExistingCircle = true;
@@ -258,7 +258,7 @@ function onPinch(ev) {
     // loop through the balls array
     for (var i = 0; i < balls.length; i++) {
       // check if the pinch point was in a circle
-      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle) {
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y + paper.view.bounds.y) && !interactingWithExistingCircle) {
         // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
         // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
         currentBall = balls[i];
@@ -284,7 +284,7 @@ function onPinch(ev) {
     if (!interactingWithExistingCircle) {
       creatingCircle = true;
       var radius = Math.random() * 60 + 60;
-      var position = new Point(ev.center.x, ev.center.y);
+      var position = new Point(ev.center.x, ev.center.y + paper.view.bounds.y);
       var tempBall = new Ball(
         radius, 
         position, 
@@ -322,6 +322,7 @@ function onPinch(ev) {
 
   else if (ev.type == 'pinchmove') {
     if (interactingWithExistingCircle) {
+      // console.log(ev);
       currentBall.radius = ev.scale*50;
 
       if (currentBall.radius < minRadius) {
@@ -363,7 +364,7 @@ function onPan(ev) {
     // loop through the balls array
     for (var i = 0; i < balls.length; i++) {
       // check if the pinch point was in a circle
-      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle) {
+      if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y + paper.view.bounds.y) && !interactingWithExistingCircle) {
         currentBall = balls[i];
         // currentBall.path.fillColor = 'red';
         interactingWithExistingCircle = true;
@@ -381,9 +382,13 @@ function onPan(ev) {
 
         break;
       }
-      else if ((!inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle)) {
+      else if ((!inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y + paper.view.bounds.y) && !interactingWithExistingCircle)) {
         scrolling = true;
-        console.log('scrolling');
+        // console.log(ev);
+        if ((paper.view.bounds.y + (-ev.deltaY/10)) > 0) {
+          paper.view.scrollBy(new Point(0, -ev.deltaY/10));
+          // console.log(paper.view.bounds);
+        }
       }
     }
   }
@@ -391,7 +396,13 @@ function onPan(ev) {
   else if (ev.type == 'panmove') {
     if (interactingWithExistingCircle) {
       currentBall.point.x = ev.center.x;
-      currentBall.point.y = ev.center.y;
+      currentBall.point.y = ev.center.y + paper.view.bounds.y;
+    }
+    else {
+      if ((paper.view.bounds.y + (-ev.deltaY/10)) > 0) {
+        paper.view.scrollBy(new Point(0, -ev.deltaY/10));
+        // console.log(paper.view.bounds);
+      }
     }
   }
 
