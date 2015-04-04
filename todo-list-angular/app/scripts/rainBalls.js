@@ -397,6 +397,18 @@ function onPan(ev) {
     if (interactingWithExistingCircle) {
       currentBall.point.x = ev.center.x;
       currentBall.point.y = ev.center.y + paper.view.bounds.y;
+
+      // console.log(paper.view.bounds);
+
+      // scroll down 7px at a time if the user ius holding the circle near the bottom of the view
+      if (currentBall.point.y > (paper.view.bounds.height + paper.view.bounds.y - 50)) {
+        paper.view.scrollBy(new Point(0, 7));
+      }
+      // scroll up 7px at a time if the user is holding the circle near the bottom of the view, 
+      // and its not past the "top edge"
+      else if ((currentBall.point.y < (paper.view.bounds.y + 50)) &&  (paper.view.bounds.y -5 > 0)) {
+        paper.view.scrollBy(new Point(0, -7));
+      }
     }
     else {
       if ((paper.view.bounds.y + (-ev.deltaY/10)) > 0) {
