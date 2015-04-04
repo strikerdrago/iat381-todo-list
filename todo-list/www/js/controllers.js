@@ -6,6 +6,10 @@ angular.module('starter.controllers', [])
   $scope.changeState = function () {
       console.log("edit mode on!");
       $state.go('edit');
+  }
+
+  $scope.textInput = function(){
+  	  
   };
 })
 
