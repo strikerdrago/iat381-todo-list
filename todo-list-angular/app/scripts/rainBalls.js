@@ -1,23 +1,5 @@
 // kynd.info 2014
 
-var canvas = document.getElementById('rainBalls'),
-    context = canvas.getContext('2d');
-
-// resize the canvas to fill browser window dynamically
-// window.addEventListener('resize', resizeCanvas, false);
-
-// function resizeCanvas() {
-//   canvas.width = window.innerWidth;
-//   canvas.height = window.innerHeight;
-
-  /**
-   * Your drawings need to be inside this function otherwise they will be reset when 
-   * you resize the browser window and the canvas goes will be cleared.
-   */
-// }
-
-
-
 var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   {
   recognizers: [
@@ -39,7 +21,7 @@ function Ball(r, p, v, textInput) {
   this.point = p;
   this.vector = v;
   this.maxVec = 2;
-  this.numSegment = Math.floor(r / 3 + 2);
+  this.numSegment = Math.floor(r / 4 + 2);
   this.boundOffset = [];
   this.boundOffsetBuff = [];
   this.sidePoints = [];
@@ -113,10 +95,10 @@ Ball.prototype = {
       // this.vector.angle = -this.vector.angle;
     }
 
-    if (this.point.y > size.height - this.radius) {
-      this.point.y = size.height - this.radius;
-      // this.vector.angle = -this.vector.angle;
-    }
+    // if (this.point.y > size.height - this.radius) {
+    //   this.point.y = size.height - this.radius;
+    //   // this.vector.angle = -this.vector.angle;
+    // }
   },
 
   updateShape: function() {
@@ -124,8 +106,8 @@ Ball.prototype = {
     for (var i = 0; i < this.numSegment; i ++)
       segments[i].point = this.getSidePoint(i);
 
-    this.path.smooth();
-    this.tempPath.smooth();
+    // this.path.smooth();
+    // this.tempPath.smooth();
     for (var i = 0; i < this.numSegment; i ++) {
       if (this.boundOffset[i] < this.radius / 4)
         this.boundOffset[i] = this.radius / 4;
@@ -141,17 +123,17 @@ Ball.prototype = {
     for (var i = 0; i < this.numSegment; i ++)
       segmentsOverlay[i].point = this.getSidePoint(i);
 
-    this.tempPath.smooth();
-    for (var i = 0; i < this.numSegment; i ++) {
-      if (this.boundOffset[i] < this.radius / 4)
-        this.boundOffset[i] = this.radius / 4;
-      var next = (i + 1) % this.numSegment;
-      var prev = (i > 0) ? i - 1 : this.numSegment - 1;
-      var offset = this.boundOffset[i];
-      offset += (this.radius - offset) / 15;
-      offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
-      this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
-    }
+    // this.tempPath.smooth();
+    // for (var i = 0; i < this.numSegment; i ++) {
+    //   if (this.boundOffset[i] < this.radius / 4)
+    //     this.boundOffset[i] = this.radius / 4;
+    //   var next = (i + 1) % this.numSegment;
+    //   var prev = (i > 0) ? i - 1 : this.numSegment - 1;
+    //   var offset = this.boundOffset[i];
+    //   offset += (this.radius - offset) / 15;
+    //   offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
+    //   this.boundOffsetBuff[i] = this.boundOffset[i] = offset;
+    // }
   },
 
   react: function(b) {
@@ -354,43 +336,7 @@ function onPinch(ev) {
   }
 
   else if (ev.type == 'pinchend') {
-    // remove the ball if it's too small
-    if (currentBall) {
-      if (currentBall.radius < minRadius) {
-        var index = balls.indexOf(currentBall);
-        currentBall.path.remove();
-        currentBall.tempPath.remove();
-        currentBall.textInput.remove();
-        // console.log('index: ' + index);
-        if (index > -1) {
-            balls.splice(index, 1);
-        }
-      }
-    }
-
-    if (creatingCircle) {
-      creatingCircle = false;
-      if (currentBall) {
-        if (currentBall.radius > minRadius) {
-          tapped = true;
-          tappedTodo();
-        }
-      }
-      else {
-        tapped = true;
-        tappedTodo();
-      }
-    }
-
-    if (tempVector && tempWeight && currentBall) {
-      currentBall.vector = tempVector;
-      currentBall.weight = tempWeight;
-    }
-
-    tempVector = null;
-    tempWeight = null;
-    interactingWithExistingCircle = false;
-    currentBall = null;
+    interactionEnd();
   }
 }
 
@@ -428,42 +374,7 @@ function onPan(ev) {
   }
 
   else if (ev.type == 'panend') {
-    // remove the ball if it's too small
-    if (currentBall) {
-      if (currentBall.radius < minRadius) {
-        var index = balls.indexOf(currentBall);
-        currentBall.path.remove();
-        currentBall.tempPath.remove();
-        currentBall.textInput.remove();
-        // console.log('index: ' + index);
-        if (index > -1) {
-            balls.splice(index, 1);
-        }
-      }
-    }
-
-    if (creatingCircle) {
-      creatingCircle = false;
-      if (currentBall) {
-        if (currentBall.radius > minRadius) {
-          tapped = true;
-          tappedTodo();
-        }
-      }
-      else {
-        tapped = true;
-        tappedTodo();
-      }
-    }
-
-    if (tempVector && tempWeight && currentBall) {
-      currentBall.vector = tempVector;
-      currentBall.weight = tempWeight;
-    }
-    tempVector = null;
-    tempWeight = null;
-    interactingWithExistingCircle = false;
-    currentBall = null;
+    interactionEnd();
   }
 }
 
@@ -484,6 +395,45 @@ function onFrame() {
   } else {
     noitemsoverlay.style.display = "block";
   }
+}
+
+function interactionEnd() {
+  // remove the ball if it's too small
+  if (currentBall) {
+    if (currentBall.radius < minRadius) {
+      var index = balls.indexOf(currentBall);
+      currentBall.path.remove();
+      currentBall.tempPath.remove();
+      currentBall.textInput.remove();
+      // console.log('index: ' + index);
+      if (index > -1) {
+          balls.splice(index, 1);
+      }
+    }
+  }
+
+  if (creatingCircle) {
+    creatingCircle = false;
+    if (currentBall) {
+      if (currentBall.radius > minRadius) {
+        tapped = true;
+        tappedTodo();
+      }
+    }
+    else {
+      tapped = true;
+      tappedTodo();
+    }
+  }
+
+  if (tempVector && tempWeight && currentBall) {
+    currentBall.vector = tempVector;
+    currentBall.weight = tempWeight;
+  }
+  tempVector = null;
+  tempWeight = null;
+  interactingWithExistingCircle = false;
+  currentBall = null;
 }
 
 // function to check if a point is inside a circle
