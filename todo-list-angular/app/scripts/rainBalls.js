@@ -15,6 +15,24 @@ mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
 mc.add( new Hammer.Press({ time: '200' }) );
 mc.add( new Hammer.Tap({ event: 'singletap' }) );
 
+function onFrame() {
+  if (!tapped){
+    for (var i = 0; i < balls.length - 1; i++) {
+      for (var j = i + 1; j < balls.length; j++) {
+      balls[i].react(balls[j]);
+      }
+    }
+    for (var i = 0, l = balls.length; i < l; i++) {
+      balls[i].iterate();
+    }
+  }
+  
+  if (balls.length != 0){
+    noitemsoverlay.style.display = "none";
+  } else {
+    noitemsoverlay.style.display = "block";
+  }
+}
 
 function Ball(r, p, v, textInput) {
   this.radius = r;
@@ -209,7 +227,7 @@ var overlay = document.getElementById("overlay");
 var overlayDisplay = document.getElementById("overlay").style.display;
 var noitemsoverlay = document.getElementById("noitemstext");
 var todofield = document.getElementById("todofield");
-
+var scrolling = false;
 var tapped = false;
 
 function onTap(ev) {
@@ -363,6 +381,10 @@ function onPan(ev) {
 
         break;
       }
+      else if ((!inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y) && !interactingWithExistingCircle)) {
+        scrolling = true;
+        console.log('scrolling');
+      }
     }
   }
 
@@ -375,25 +397,6 @@ function onPan(ev) {
 
   else if (ev.type == 'panend') {
     interactionEnd();
-  }
-}
-
-function onFrame() {
-  if (!tapped){
-    for (var i = 0; i < balls.length - 1; i++) {
-      for (var j = i + 1; j < balls.length; j++) {
-      balls[i].react(balls[j]);
-      }
-    }
-    for (var i = 0, l = balls.length; i < l; i++) {
-      balls[i].iterate();
-    }
-  }
-  
-  if (balls.length != 0){
-    noitemsoverlay.style.display = "none";
-  } else {
-    noitemsoverlay.style.display = "block";
   }
 }
 
@@ -434,6 +437,7 @@ function interactionEnd() {
   tempWeight = null;
   interactingWithExistingCircle = false;
   currentBall = null;
+  scrolling = false;
 }
 
 // function to check if a point is inside a circle
