@@ -106,8 +106,8 @@ Ball.prototype = {
 		for (var i = 0; i < this.numSegment; i ++)
 			segments[i].point = this.getSidePoint(i);
 
-		// this.path.smooth();
-		// this.tempPath.smooth();
+		this.path.smooth();
+		this.tempPath.smooth();
 		for (var i = 0; i < this.numSegment; i ++) {
 			if (this.boundOffset[i] < this.radius / 4)
 				this.boundOffset[i] = this.radius / 4;
@@ -123,7 +123,7 @@ Ball.prototype = {
 		for (var i = 0; i < this.numSegment; i ++)
 			segmentsOverlay[i].point = this.getSidePoint(i);
 
-		// this.tempPath.smooth();
+		this.tempPath.smooth();
 		for (var i = 0; i < this.numSegment; i ++) {
 			if (this.boundOffset[i] < this.radius / 4)
 				this.boundOffset[i] = this.radius / 4;
@@ -336,7 +336,44 @@ function onPinch(ev) {
   }
 
   else if (ev.type == 'pinchend') {
-    interactionEnd();
+    // remove the ball if it's too small
+    if (currentBall) {
+      if (currentBall.radius < minRadius) {
+        var index = balls.indexOf(currentBall);
+        currentBall.path.remove();
+        currentBall.tempPath.remove();
+        currentBall.textInput.remove();
+        // console.log('index: ' + index);
+        if (index > -1) {
+            balls.splice(index, 1);
+        }
+      }
+    }
+
+    if (creatingCircle) {
+      creatingCircle = false;
+      if (currentBall) {
+        if (currentBall.radius > minRadius) {
+          tapped = true;
+          tappedTodo();
+        }
+      }
+      else {
+        tapped = true;
+        tappedTodo();
+      }
+    }
+
+    if (tempVector && tempWeight && currentBall) {
+      currentBall.vector = tempVector;
+      currentBall.weight = tempWeight;
+    }
+
+    tempVector = null;
+    tempWeight = null;
+    interactingWithExistingCircle = false;
+    currentBall = null;
+  }
 }
 
 function onPan(ev) {
@@ -373,7 +410,43 @@ function onPan(ev) {
   }
 
   else if (ev.type == 'panend') {
-    interactionEnd();
+    // remove the ball if it's too small
+    if (currentBall) {
+      if (currentBall.radius < minRadius) {
+        var index = balls.indexOf(currentBall);
+        currentBall.path.remove();
+        currentBall.tempPath.remove();
+        currentBall.textInput.remove();
+        // console.log('index: ' + index);
+        if (index > -1) {
+            balls.splice(index, 1);
+        }
+      }
+    }
+
+    if (creatingCircle) {
+      creatingCircle = false;
+      if (currentBall) {
+        if (currentBall.radius > minRadius) {
+          tapped = true;
+          tappedTodo();
+        }
+      }
+      else {
+        tapped = true;
+        tappedTodo();
+      }
+    }
+
+    if (tempVector && tempWeight && currentBall) {
+      currentBall.vector = tempVector;
+      currentBall.weight = tempWeight;
+    }
+    tempVector = null;
+    tempWeight = null;
+    interactingWithExistingCircle = false;
+    currentBall = null;
+  }
 }
 
 function onFrame() {
@@ -393,46 +466,6 @@ function onFrame() {
 	} else {
 		noitemsoverlay.style.display = "block";
 	}
-}
-
-function interactionEnd() {
-// remove the ball if it's too small
-  if (currentBall) {
-    if (currentBall.radius < minRadius) {
-      var index = balls.indexOf(currentBall);
-      currentBall.path.remove();
-      currentBall.tempPath.remove();
-      currentBall.textInput.remove();
-      // console.log('index: ' + index);
-      if (index > -1) {
-          balls.splice(index, 1);
-      }
-    }
-  }
-
-  if (creatingCircle) {
-    creatingCircle = false;
-    if (currentBall) {
-      if (currentBall.radius > minRadius) {
-        tapped = true;
-        tappedTodo();
-      }
-    }
-    else {
-      tapped = true;
-      tappedTodo();
-    }
-  }
-
-  if (tempVector && tempWeight && currentBall) {
-    currentBall.vector = tempVector;
-    currentBall.weight = tempWeight;
-  }
-
-  tempVector = null;
-  tempWeight = null;
-  interactingWithExistingCircle = false;
-  currentBall = null;
 }
 
 // function to check if a point is inside a circle
