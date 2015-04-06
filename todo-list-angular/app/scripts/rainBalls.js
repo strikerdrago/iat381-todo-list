@@ -492,7 +492,7 @@ function inCircle(center_x, center_y, radius, x, y) {
 tappedTodo = function(){
   var ballIndex = currentBallIndex;
   var tempContent = "";
-  window.location.hash = "#/about";
+  window.location.hash = "#/edit/" + currentBallIndex;
   $("div[ng-view]").show();
   // console.log(balls[ballIndex].textInput.content);
   // tempContent = balls[ballIndex].textInput.content;
