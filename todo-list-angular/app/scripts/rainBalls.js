@@ -14,7 +14,7 @@ var options = {
         '2': function (database) {
             // This migration part starts when your database migrates from "1" to "2" version
             var objStore = database.createObjectStore('foo_obj_store', {keyPath: 'foo'});
-            var objStore = database.createObjectStore('balltable');
+            var objStore = database.createObjectStore('balltable', {autoIncrement: true});
         }
     }
 }
@@ -78,17 +78,31 @@ pushBalls = function(balls){
 
     console.log(test);
     console.log(JSON.parse(test));
-    var data = {
-        balltable: balls        
-    };
-    conn.insert(data, function (err, insertedKeys) {
-      console.log(data);
+    testparsed = JSON.parse(test);
+
+    testparsed.forEach(function(element,index){
+      console.log(element);
+      console.log(element.radius);
+      // newBall(element.radius, element.position, element.vector, element.textInput);
+      // testBall = new Ball(element.radius, element.position, element.vector, element.textInput);
+      // console.log(testBall);
+      // testcreatedball = Object.create(Ball.prototype, element);
+      // console.log(testcreatedball);
+    })
+    var balltable = test;
+    conn.insert('balltable', balltable, function (err, insertedKeys) {
+      // console.log(balltable);
         if (err) {
             throw new Error(err.message);
         }
-
+        console.log(insertedKeys);
     })
   });
+}
+
+function newBall(r, p, v, t){
+  anotherBall = new Ball(r, p, v, t);
+  console.log(anotherBall);
 }
 
 // function updateRows() {
@@ -181,7 +195,8 @@ function Ball(r, p, v, textInput) {
   this.textInput = textInput;
   this.textInput.justification = 'left';
   this.textInput.content = "";
-  this.textInput.bringToFront();
+  console.log(this.textInput);
+  // this.textInput.bringToFront();
   this.textInput.position.x -= this.radius;
 
   // Make clipping path visable
