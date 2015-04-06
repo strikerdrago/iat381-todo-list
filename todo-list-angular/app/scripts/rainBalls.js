@@ -81,22 +81,84 @@ pushBalls = function(balls){
     testparsed = JSON.parse(test);
 
     testparsed.forEach(function(element,index){
-      console.log(element);
-      console.log(element.radius);
+      // console.log(element);
+      // console.log(element.radius);
       // newBall(element.radius, element.position, element.vector, element.textInput);
       // testBall = new Ball(element.radius, element.position, element.vector, element.textInput);
       // console.log(testBall);
       // testcreatedball = Object.create(Ball.prototype, element);
       // console.log(testcreatedball);
-    })
+        conn.insert('balltable', element, function (err, insertedKeys) {
+        // console.log(balltable);
+          if (err) {
+              throw new Error(err.message);
+          }
+          console.log(insertedKeys);
+      })
+    });
     var balltable = test;
-    conn.insert('balltable', balltable, function (err, insertedKeys) {
-      // console.log(balltable);
-        if (err) {
-            throw new Error(err.message);
-        }
-        console.log(insertedKeys);
-    })
+    // conn.insert('balltable', balltable, function (err, insertedKeys) {
+    //   // console.log(balltable);
+    //     if (err) {
+    //         throw new Error(err.message);
+    //     }
+    //     console.log(insertedKeys);
+    // })
+  });
+}
+
+function getBalls(){
+    sklad.open(dbName, options, function (err, conn) {
+      conn.get({
+              balltable: {}
+          }, function (err, data) {
+              if (err) {
+                  throw new Error(err.message);
+              }
+              // console.log(data.balltable);
+              // data contains all needed records
+              if (balls.length == 0){
+                data.balltable.forEach(function(element,index){
+                    if (element.key != 0){
+                      var ballitem = element.value;
+                      // console.log(ballitem);
+                      var radius = ballitem.radius;
+                      var position = new Point(ballitem.point[1], ballitem.point[2]);
+                      // console.log(ballitem.vector);
+                      var vector = new Point({
+                        angle: ballitem.vector[1],
+                        length: ballitem.vector[2]
+                      });
+                      // console.log(vector);
+                      
+                      var textStyle = new PointText({
+                          fillColor: '#ffffff',
+                          fontFamily: 'Open Sans',
+                          fontWeight: 'bold',
+                          fontSize: 18
+                      });
+
+                      console.log(ballitem.textInput[1].content);
+                      var textInput = ballitem.textInput[1].content;
+                      // if (textInput = " "){
+                      //   console.log("empty!");
+                        textInput = "hello world";
+                      // }
+                      var tempBall = new Ball(radius, position, vector, textStyle);
+                      tempBall.textInput.content = textInput;
+                      console.log(tempBall);
+                      balls.push(tempBall);
+                    }
+                });
+              }
+       });
+       // conn.clear(['balltable'], function (err) {
+       //      if (err) {
+       //          throw new Error(err.message);
+       //      }
+            
+       //      // objects stores are empty
+       //  });
   });
 }
 
@@ -354,6 +416,7 @@ var tapped = false;
 
 function onTap(ev) {
   testFunction();
+  getBalls();
   // testAdd();
   // updateRows();
   
