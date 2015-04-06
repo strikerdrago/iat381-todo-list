@@ -13,6 +13,14 @@ canvas[resize] {
     height: 100%;
 }
 
+div[ng-view]{
+  position: absolute;
+  display: none;
+  height:100%;
+  width: 100%;
+  top: 0;
+}
+
 #content-container {
   -webkit-perspective: 1000;
   -webkit-transform-style: preserve-3d;
@@ -39,11 +47,12 @@ canvas[resize] {
   -webkit-transform: translateZ(0px);
           transform: translateZ(0px);
 }
+
 #todolist{
   position: relative;
   width: 95%;
   top: 20%;
-  display: none;
+  /*display: none;*/
   /*left:10%;*/
   /*right:10%;*/
   /*margin-right: 40px;*/
