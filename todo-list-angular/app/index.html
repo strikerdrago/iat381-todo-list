@@ -41,7 +41,7 @@
     </div>
     <canvas id="rainBalls" resize></canvas>
     <!-- Add your site or application content here -->
-      <div ng-view=""></div>
+      <div ng-view="" ng-controller="EditCtrl"></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID
      <script>
@@ -79,6 +79,7 @@
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
+    <script src="scripts/services.js"></script>
     <script src="scripts/controllers/main.js"></script>
     <script src="scripts/controllers/edit.js"></script>
     <script type="text/paperscript" src="scripts/rainBalls.js" canvas="rainBalls"></script>

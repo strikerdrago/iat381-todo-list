@@ -8,10 +8,10 @@
  * Controller of the todoListAngularApp
  */
 angular.module('todoListAngularApp')
-  .controller('EditCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+  .controller('EditCtrl', function ($scope, $window, EditInfo) {
+    // $scope.awesomeThings = [
+    //   'HTML5 Boilerplate',
+    //   'AngularJS',
+    //   'Karma'
+    // ];
   });
