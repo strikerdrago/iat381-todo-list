@@ -1,0 +1,113 @@
+/* Empty. Add your own CSS if you like */
+
+html,
+body {
+    margin: 0;
+    overflow: hidden;
+    height: 100%;
+    font-family: Open Sans, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Scale canvas with resize attribute to full size */
+canvas[resize] {
+    width: 100%;
+    height: 100%;
+}
+
+#content-container {
+  -webkit-perspective: 1000;
+  -webkit-transform-style: preserve-3d;
+}
+
+#overlay{
+  width: 100%;
+  height: 0%;
+  opacity: 0;
+  background-color: gray;
+  /*display: none;*/
+  position: absolute;
+  border-radius: 100%;
+  -webkit-transition: opacity 0.2s, border-radius 0.2s, -webkit-transform 0.2s;  /* For Safari 3.1 to 6.0 */
+          transition: opacity 0.2s, border-radius 0.2s, transform 0.2s;
+  -webkit-transform: translateZ(-500px);
+          transform: translateZ(-500px);
+  text-align: center;
+}
+
+#overlay.shown {
+  border-radius: 0;
+  height: 100%;
+  opacity: 1;
+  -webkit-transform: translateZ(0px);
+          transform: translateZ(0px);
+}
+
+#todolist {
+  position: relative;
+  width: 100%;
+  margin-top: 20px;
+  display: none;
+}
+
+.input-field {
+  width: 100%;
+  height: 50px;
+  font-size: 1em;
+  background-color: white;
+  border: 0;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#noitemstext{
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0);
+  position: fixed;
+  text-align: center;
+  pointer-events: none;
+  font-size: 1.5em;
+  top: 50%;
+  display: block;
+}
+
+#timer-container {
+  margin-top: 10px;
+  display: none;
+}
+
+.input-field.timer {
+  width: 24%;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+#cancel-button {
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border: 0;
+  border-radius: 50px;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  vertical-align: middle;
+  background-image: url("../images/x.png");
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: 50%;
+}
+
+#remind-me-in {
+  color: white;
+}
+
+/*#save-button {
+  width: 100%;
+  height: 50px;
+  font-size: 1em;
+  background-color: white;
+  border: 0;
+  margin-top: 10px;
+}*/

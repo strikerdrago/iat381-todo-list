@@ -1,6 +1,60 @@
-<!doctype html> <html class="no-js"> <head> <meta charset="utf-8"> <title></title> <meta name="description" content=""> <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> <meta name="HandheldFriendly" content="true"> <!-- Place favicon.ico and apple-touch-icon.png in the root directory --> <link rel="stylesheet" href="styles/main.37abd6b4.css">  <body ng-app="todoListAngularApp"> <!--[if lt IE 7]>
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="true" />
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="todoListAngularApp">
+    <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]--> <!-- Test bed canvas for Rainbow Balls example "Candy Crash" --> <div id="noitemstext"> pinch outwards to create a todo </div> <div id="overlay" class="hidden"> <div id="todolist"> <form id="textEdit"> <input class="input-field" type="text" id="todofield" placeholder="What's your to-do?"> <button class="input-field" id="remind-me-button">Remind me...</button> <div id="timer-container"> <span id="remind-me-in">Remind me in</span> <input class="input-field timer" id="numTimeUnits" type="number" min="0" max="9999"> <select class="input-field timer" id="timeUnits"> <option value="seconds">seconds <option value="minutes">minutes <option value="hours">hours <option value="days">days </select> <button id="cancel-button"></button> <input class="input-field" type="text" id="email-field" placeholder="Enter your email for notifications"> </div> <div> <button class="input-field" id="save-button" onclick="textEditSubmit()">Save</button> </div> </form> </div> </div> <canvas id="rainBalls" resize></canvas> <!-- Add your site or application content here --> <div ng-view=""></div> <!-- Google Analytics: change UA-XXXXX-X to be your site's ID
+    <![endif]-->
+    <!-- Test bed canvas for Rainbow Balls example "Candy Crash" -->
+    <div id="noitemstext">
+      pinch outwards to create a todo
+    </div>
+    <div id="overlay" class="hidden">
+      <div id="todolist">
+        <form id="textEdit">
+          <input class="input-field" type="text" id="todofield" placeholder="What's your to-do?">
+
+          <button class="input-field" id="remind-me-button">Remind me...</button>
+
+          <div id="timer-container">
+            <span id="remind-me-in">Remind me in</span>
+            <input class="input-field timer" id="numTimeUnits" type="number" min="0" max="9999">
+            <select class="input-field timer" id="timeUnits">
+              <option value="seconds">seconds</option>
+              <option value="minutes">minutes</option>
+              <option value="hours">hours</option>
+              <option value="days">days</option>
+            </select>
+            <button id="cancel-button"></button>
+            <input class="input-field" type="text" id="email-field" placeholder="Enter your email for notifications">
+          </div>
+
+          <div>
+            <button class="input-field" id="save-button" onclick="textEditSubmit()">Save</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+    <canvas id="rainBalls" resize></canvas>
+    <!-- Add your site or application content here -->
+      <div ng-view=""></div>
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID
      <script>
        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -10,6 +64,38 @@
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
     </script>
-    --> <!--[if lt IE 9]>
-    <script src="scripts/oldieshim.675309ab.js"></script>
-    <![endif]--> <script src="scripts/vendor.d416ce43.js"></script> <script src="scripts/scripts.6ffcf801.js"></script>  
+    -->
+
+    <!-- build:js(.) scripts/oldieshim.js -->
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.js"></script>
+    <![endif]-->
+    <!-- endbuild -->
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular-cookies.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular-resource.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular-route.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular-sanitize.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.2/angular-touch.min.js"></script>
+    <script src="bower_components/paper/dist/paper-full.js"></script>
+    <script src="bower_components/hammer.js/hammer.js"></script>
+    <script src="bower_components/sklad/sklad.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/about.js"></script>
+    <script src="https://mandrillapp.com/api/docs/js/mandrill.js"></script>
+    <script type="text/paperscript" src="scripts/rainBalls.js" canvas="rainBalls"></script>
+    <script src="scripts/test.js"></script>
+    <!-- endbuild -->
+</body>
+</html>
