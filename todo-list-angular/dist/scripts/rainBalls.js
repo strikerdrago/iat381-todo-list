@@ -7,6 +7,10 @@ var options = {
     migration: {
         '1': function (database) {
             var objStore = database.createObjectStore('balltable', {keyPath: 'index', autoIncrement: true});
+            
+        },
+        '2': function (database) {
+            var objStore = database.createObjectStore('email', {keyPath: 'index'});
         }
     }
 }
@@ -27,6 +31,23 @@ testFunction = function(){
   //       });
   // });
 };
+
+function pushEmail(email){
+  sklad.open(dbName, options, function (err, conn) {
+    // console.log("attempting to push your email");
+    var data = {
+      email: [{index: 1, value: email}
+      ]
+    };
+    console.log(data);
+    conn.upsert(data, function (err, upsertedKeys) {
+        if (err) {
+            throw new Error(err.message);
+        }
+        console.log("That was ball " + upsertedKeys + " in the db");
+    })
+  });
+}
 
 function pushBall(ball, index){
   sklad.open(dbName, options, function (err, conn) {
@@ -78,6 +99,27 @@ function deleteBalls(){
   });
 }
 
+
+function getEmail(){
+  // console.log("attempting to get balls");
+    sklad.open(dbName, options, function (err, conn) {
+      conn.get({
+              email: {}
+          }, function (err, data) {
+              if (err) {
+                  throw new Error(err.message);
+              }
+              // console.log("attempting to get email");
+              if (data.email[0].value.value != ""){
+                console.log("updating email");
+                userEmail = data.email[0].value.value;
+              }
+              
+              // console.log(data.email[0].value.value);
+       });
+
+  });
+}
 
 function getBalls(){
   // console.log("attempting to get balls");
@@ -220,6 +262,7 @@ function onFrame() {
   } else {
     noitemsoverlay.style.display = "block";
     if (firstRun){
+      getEmail();
       getBalls();
     }
   }
@@ -833,10 +876,12 @@ textEditSubmit = function() {
   }
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
-  balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
+  
 
   userEmail = $("#email-field").val();
+  pushEmail(userEmail);
   if (alarmTimeMilliseconds > new Date().getTime()){
+    balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
     console.log(alarmTimeMilliseconds);
     nextAlarm = new Date(alarmTimeMilliseconds);
     monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
