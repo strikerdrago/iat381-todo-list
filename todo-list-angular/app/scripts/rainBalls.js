@@ -115,12 +115,14 @@ function getBalls(){
 
                       // console.log(ballitem.textInput[1].content);
                       var textInput = ballitem.textInput[1].content;
+                      var nextText = ballitem.nextText[1].content;
                       // if (textInput = " "){
                       //   console.log("empty!");
                         // textInput = "hello world";
                       // }
                       var tempBall = new Ball(radius, position, vector, textStyle);
                       tempBall.textInput.content = textInput;
+                      tempBall.nextText.content = nextText;
                       // console.log(tempBall);
                       balls.push(tempBall);
                     }
@@ -234,7 +236,7 @@ function Ball(r, p, v, textInput) {
   this.textInput.position.x -= this.radius;
   this.nextText = textInput.clone();
   // change this to empty later, only have content when above 20 chars
-  this.nextText.content = "wow a new line"; 
+  this.nextText.content = ""; 
 
   // clone = same properties at time of creation, 
   // but it starts blank since the content isn't set here
@@ -268,6 +270,7 @@ Ball.prototype = {
     this.nextText.point = this.point;
     this.nextText.point.x -= this.radius - 15;
     this.nextText.point.y += 30;
+    this.nextText.fontSize = this.textInput.fontSize;
 
     this.timerText.point = this.point;
     // this.timerText.point.x += this.radius;
@@ -520,6 +523,7 @@ function onPinch(ev) {
       if (currentBall.radius < minRadius) {
         currentBall.path.fillColor = '#ff0000';
         currentBall.textInput.content = 'DELETE!';
+        currentBall.nextText.visible = false;
       }
 
       else if (currentBall.radius > maxRadius) {
@@ -527,6 +531,7 @@ function onPinch(ev) {
         currentBall.radius = maxRadius;
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
         // console.log(currentBall.textInput.fontSize);
+        currentBall.nextText.visible = true;
         if (!creatingCircle) {
           currentBall.textInput.content = tempText;
         }
@@ -539,7 +544,8 @@ function onPinch(ev) {
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
         // console.log(currentBall.radius);
         // console.log(currentBall.textInput.fontSize);
-        console.log(currentBall.textInput.content.length);
+        // console.log(currentBall.textInput.content.length);
+        currentBall.nextText.visible = true;
         currentBall.textInput.fontSize = (currentBall.radius/120)*18;
 
         if (!creatingCircle) {
@@ -703,7 +709,7 @@ tappedTodo = function(){
   var tempContent = "";
 
   console.log(balls[ballIndex].textInput.content);
-  tempContent = balls[ballIndex].textInput.content;
+  tempContent = balls[ballIndex].textInput.content + balls[ballIndex].nextText.content;
   todofield.value = tempContent;
 
   // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
@@ -760,8 +766,17 @@ textEditSubmit = function() {
     default:
       break;
   }
-  if (todofield.value.length > 20){
+  if (todofield.value.length > -1 && todofield.value.length <= 20){
+    console.log('just right');
+    balls[ballIndex].nextText.content = "";
+  } else if (todofield.value.length > 20){
     console.log("halp I'm too big");
+    var slicedTextA = todofield.value.slice(0,20);
+    var slicedTextB = todofield.value.slice(20);
+    console.log(slicedTextA);
+    console.log(slicedTextB);
+    balls[ballIndex].textInput.content = slicedTextA;
+    balls[ballIndex].nextText.content = slicedTextB;
   }
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
