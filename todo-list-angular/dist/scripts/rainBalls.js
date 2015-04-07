@@ -867,6 +867,7 @@ textEditSubmit = function() {
   } else if (alarmTimeMilliseconds <= new Date().getTime()){
     console.log("wow");
     balls[ballIndex].timerText.content = "";
+    balls[ballIndex].dateText.content = "";
     balls[ballIndex].alarmTimeMilliseconds = undefined;
   }
 
