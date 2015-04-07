@@ -24,17 +24,12 @@
       pinch to create a todo
     </div>
     <div id="overlay" class="hidden">
-      <div class="list list-inset" id="todolist">
+      <div id="todolist">
         <form id="textEdit">
-        <div class="item item-text-wrap">
-          <span class="input-label">Todo: </span>
-          <input type="text" id="todofield" placeholder="type text here">
-        </div>
-        <div class="item item-text-wrap">
-          <button class="button button-positive" onclick="textEditSubmit()">Submit</button>
-        </div>
-        
-        
+          <input type="text" id="todofield" placeholder="What's your to-do?">
+          <div>
+            <button id="save-button" onclick="textEditSubmit()">Save</button>
+          </div>
         </form>
       </div>
       
