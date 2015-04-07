@@ -836,12 +836,15 @@ textEditSubmit = function() {
   balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
 
   userEmail = $("#email-field").val();
-  nextAlarm = new Date(alarmTimeMilliseconds);
-  monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
-  hmsParsed = nextAlarm.getHours() + ":"+ 
-  nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
-  console.log(monthdayParsed + " " + hmsParsed);
-  balls[ballIndex].timerText.content = hmsParsed;
+  if (alarmTimeMilliseconds > new Date().getTime()){
+    console.log(alarmTimeMilliseconds);
+    nextAlarm = new Date(alarmTimeMilliseconds);
+    monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+    hmsParsed = nextAlarm.getHours() + ":"+ 
+    nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+    console.log(monthdayParsed + " " + hmsParsed);
+    balls[ballIndex].timerText.content = hmsParsed;
+  }
 
   console.log(balls[ballIndex]);
 
