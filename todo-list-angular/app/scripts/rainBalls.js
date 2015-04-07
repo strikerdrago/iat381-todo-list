@@ -1,4 +1,194 @@
 // kynd.info 2014
+var firstRun = true;
+
+var dbName = 'dbtest';
+var options = {
+    version: 2,
+    migration: {
+        '1': function (database) {
+            var objStore = database.createObjectStore('foo_obj_store', {keyPath: 'foo'});
+            var objStore = database.createObjectStore('balltable', {keyPath: 'index', autoIncrement: true});
+        }
+    }
+}
+
+testFunction = function(){
+  // sklad.open(dbName, options, function (err, conn) {
+  //   console.log("test");
+  //     conn
+  //       .get({
+  //         users: {direction: sklad.DESC, index: 'name_search'}
+  //       }, function (err, data) {
+  //         if (err) { return console.error(err); }
+          
+  //         console.log(data.users);
+  //         for(var user in data.users){
+  //           console.log(data.users[user].key);
+  //         }
+  //       });
+  // });
+};
+
+function pushBall(ball, index){
+  sklad.open(dbName, options, function (err, conn) {
+    console.log("attempting to push a single ball");
+    var tempBall = JSON.parse(JSON.stringify(ball));
+    console.log(tempBall);
+    var data = {
+      balltable: [{index: index, value: tempBall}
+      ]
+    };
+    console.log(data);
+    conn.upsert(data, function (err, upsertedKeys) {
+        if (err) {
+            throw new Error(err.message);
+        }
+        console.log("That was ball " + upsertedKeys + " in the db");
+    })
+  });
+}
+
+function pushBalls(balls){
+  sklad.open(dbName, options, function (err, conn) {
+    console.log("attempting to push all the balls");
+    var tempBalls = JSON.parse(JSON.stringify(balls));
+    // console.log(tempBalls);
+    // var data = [];
+    // console.log(data);
+    for (var i = 0; i < tempBalls.length; i++) {
+      console.log(tempBalls[i]);
+      var balltable = {index:i, value:tempBalls[i]};
+        conn.upsert('balltable', balltable, function (err, upsertedKeys) {
+          if (err) {
+              throw new Error(err.message);
+          }
+          console.log("That was ball " + upsertedKeys + " in the db");
+      });
+      // data.push(balltable);
+      // console.log(data);
+      // data.push(balltable: [{index:i, tempBalls[i]]});
+    };
+    // var data = {
+    //   balltable: [{index: index, value: tempBalls}
+    //   ]
+    // };
+    // console.log(data);
+    // conn.upsert('balltable', data, function (err, upsertedKeys) {
+    //     if (err) {
+    //         throw new Error(err.message);
+    //     }
+    //     console.log("That was ball " + upsertedKeys + " in the db");
+    // })
+  });
+}
+
+function deleteBall(){
+  sklad.open(dbName, options, function (err, conn) {
+    console.log("attempting to delete a single ball");
+  });
+}
+
+// pushBalls = function(balls){
+//   sklad.open(dbName, options, function (err, conn) {
+//     console.log("attempting to push balls");
+//     test = JSON.stringify(balls);
+
+//     console.log(test);
+//     console.log(JSON.parse(test));
+//     testparsed = JSON.parse(test);
+
+//     testparsed.forEach(function(element,index){
+//       // console.log(element);
+//       // console.log(element.radius);
+//       // newBall(element.radius, element.position, element.vector, element.textInput);
+//       // testBall = new Ball(element.radius, element.position, element.vector, element.textInput);
+//       // console.log(testBall);
+//       // testcreatedball = Object.create(Ball.prototype, element);
+//       // console.log(testcreatedball);
+//         conn.upsert('balltable', element, function (err, upsertedKeys) {
+//           if (err) {
+//               throw new Error(err.message);
+//           }
+//           console.log(upsertedKeys);
+//       })
+//       //   conn.insert('balltable', element, function (err, insertedKeys) {
+//       //     if (err) {
+//       //         throw new Error(err.message);
+//       //     }
+//       //     console.log(insertedKeys);
+//       // })
+//     });
+//     // var balltable = test;
+//     // conn.insert('balltable', balltable, function (err, insertedKeys) {
+//     //   // console.log(balltable);
+//     //     if (err) {
+//     //         throw new Error(err.message);
+//     //     }
+//     //     console.log(insertedKeys);
+//     // })
+//   });
+// }
+
+function getBalls(){
+  // console.log("attempting to get balls");
+    sklad.open(dbName, options, function (err, conn) {
+      conn.get({
+              balltable: {}
+          }, function (err, data) {
+              if (err) {
+                  throw new Error(err.message);
+              }
+              // console.log(data.balltable);
+              // data contains all needed records
+              if (balls.length == 0 && data.balltable.length != 0){
+                // console.log("we are happening");
+                firstRun = false;
+                data.balltable.forEach(function(element,index){
+                    if (element.key >= 0){
+                      var ballitem = element.value.value;
+                      // console.log(ballitem);
+                      var radius = ballitem.radius;
+                      var position = new Point(ballitem.point[1], ballitem.point[2]);
+                      // console.log(ballitem.vector);
+                      var vector = new Point({
+                        angle: 270,
+                        length: 3
+                      });
+                      // console.log(vector);
+                      
+                      var textStyle = new PointText({
+                          fillColor: '#ffffff',
+                          fontFamily: 'Open Sans',
+                          fontWeight: 'bold',
+                          fontSize: 18
+                      });
+
+                      // console.log(ballitem.textInput[1].content);
+                      var textInput = ballitem.textInput[1].content;
+                      // if (textInput = " "){
+                      //   console.log("empty!");
+                        // textInput = "hello world";
+                      // }
+                      var tempBall = new Ball(radius, position, vector, textStyle);
+                      tempBall.textInput.content = textInput;
+                      // console.log(tempBall);
+                      balls.push(tempBall);
+                    }
+                });
+              } else if (data.balltable.length == 0){
+                console.log("nothing here");
+                firstRun = false;
+              }
+       });
+       // conn.clear(['balltable'], function (err) {
+       //      if (err) {
+       //          throw new Error(err.message);
+       //      }
+            
+       //      // objects stores are empty
+       //  });
+  });
+}
 
 var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   {
@@ -41,6 +231,9 @@ function onFrame() {
     noitemsoverlay.style.display = "none";
   } else {
     noitemsoverlay.style.display = "block";
+    if (firstRun){
+      getBalls();
+    }
   }
 }
 
@@ -86,7 +279,8 @@ function Ball(r, p, v, textInput) {
   this.textInput = textInput;
   this.textInput.justification = 'left';
   this.textInput.content = "";
-  this.textInput.bringToFront();
+  // console.log(this.textInput);
+  // this.textInput.bringToFront();
   this.textInput.position.x -= this.radius;
 
   // Make clipping path visable
@@ -245,6 +439,10 @@ var scrolling = false;
 var tapped = false;
 
 function onTap(ev) {
+  // testFunction();
+  // getBalls();
+  // testAdd();
+  // updateRows();
 
   if(ev.type == 'singletap') {
     // loop through the balls array
@@ -276,6 +474,7 @@ function onPinch(ev) {
         // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
         // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
         currentBall = balls[i];
+        console.log("I am in ball " + i);
         // currentBall.path.fillColor = 'black';
         interactingWithExistingCircle = true;
         tempText = currentBall.textInput.content;
@@ -439,9 +638,11 @@ function onPan(ev) {
 
 function interactionEnd() {
   // remove the ball if it's too small
+  var index;
   if (currentBall) {
+    index = balls.indexOf(currentBall);
     if (currentBall.radius < minRadius) {
-      var index = balls.indexOf(currentBall);
+      // var index = balls.indexOf(currentBall);
       currentBall.path.remove();
       currentBall.tempPath.remove();
       currentBall.textInput.remove();
@@ -475,6 +676,12 @@ function interactionEnd() {
   interactingWithExistingCircle = false;
   currentBall = null;
   scrolling = false;
+
+  console.log(index);
+  if(index != undefined){
+    console.log(balls[index]);
+    pushBalls(balls);
+  }
 }
 
 // function to check if a point is inside a circle
@@ -571,6 +778,7 @@ textEditSubmit = function() {
 
   console.log(balls[ballIndex]);
 
+  pushBall(balls[ballIndex], ballIndex);
   // overlay.style.display = "none";
   $( "#overlay" ).toggleClass( "shown" );
   $( "#todolist" ).hide();
@@ -587,3 +795,24 @@ $("#cancel-button").on("click", function() {
   $("#timer-container").slideUp(200);
   $("#remind-me-button").show();
 });
+
+
+    
+
+    // $("#rainBalls").click(function(){
+    //     if(balls.length != 0){
+    //         console.log("we got balls");
+    //         console.log(balls);
+    //     }
+
+    // });
+
+// Attempting to catch the user closing tab, but fails on mobile
+// window.onunload = window.onbeforeunload = function() {
+//   return "Bye now!";
+//   alert("Bye now!");
+// };
+
+// $( window ).unload(function() {
+//   return "Bye now!";
+// });
