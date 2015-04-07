@@ -123,6 +123,18 @@ function getBalls(){
                       var tempBall = new Ball(radius, position, vector, textStyle);
                       tempBall.textInput.content = textInput;
                       tempBall.nextText.content = nextText;
+
+                      var timeInMs = ballitem.alarmTimeMilliseconds;
+                      tempBall.alarmTimeMilliseconds = timeInMs;
+
+                      if (timeInMs != undefined){
+                        nextAlarm = new Date(timeInMs);
+                        monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+                        hmsParsed = nextAlarm.getHours() + ":"+ 
+                        nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+                        console.log(monthdayParsed + " " + hmsParsed);
+                        tempBall.timerText.content = hmsParsed;
+                      }
                       // console.log(tempBall);
                       balls.push(tempBall);
                     }
@@ -173,7 +185,8 @@ function onFrame() {
         balls[i].timeUntilAlarm = null;
         balls[i].timeUntilAlarmUnits = null;
 
-
+        balls[i].timerText.content = "";
+        pushBalls(balls);
         alert("To-do reminder: " + balls[i].textInput.content);
       }
     }
@@ -243,11 +256,12 @@ function Ball(r, p, v, textInput) {
   this.timerText = textInput.clone();
   this.timerText.justification = 'center';
   this.timerText.fontSize = 12;
-  this.timerText.content = "12s";
 
-  console.log(this.textInput);
-  console.log(this.nextText);
-  console.log(this.timerText);
+  this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": new Date(this.alarmTimeMilliseconds);
+
+  // console.log(this.textInput);
+  // console.log(this.nextText);
+  // console.log(this.timerText);
 
   // first object = clipping mask
   // the rest are displayed as normal
@@ -275,6 +289,9 @@ Ball.prototype = {
     this.timerText.point = this.point;
     // this.timerText.point.x += this.radius;
     this.timerText.point.y += this.radius - 25;
+    // if (this.alarmTimeMilliseconds != undefined)
+    //  console.log(new Date(this.alarmTimeMilliseconds));
+    // this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": this.alarmTimeMilliseconds;
 
     this.updateShape();
   },
@@ -377,10 +394,6 @@ Ball.prototype = {
   updateBounds: function() {
     for (var i = 0; i < this.numSegment; i ++)
       this.boundOffset[i] = this.boundOffsetBuff[i];
-  },
-
-  splitText: function() {
-    console.log("splitting er up and such");
   }
 };
 
@@ -781,6 +794,13 @@ textEditSubmit = function() {
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
   balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
+
+  nextAlarm = new Date(alarmTimeMilliseconds);
+  monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+  hmsParsed = nextAlarm.getHours() + ":"+ 
+  nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+  console.log(monthdayParsed + " " + hmsParsed);
+  balls[ballIndex].timerText.content = hmsParsed;
 
   console.log(balls[ballIndex]);
 
