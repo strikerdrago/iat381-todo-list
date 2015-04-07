@@ -232,9 +232,24 @@ function Ball(r, p, v, textInput) {
   // console.log(this.textInput);
   // this.textInput.bringToFront();
   this.textInput.position.x -= this.radius;
+  this.nextText = textInput.clone();
+  // change this to empty later, only have content when above 20 chars
+  this.nextText.content = "wow a new line"; 
 
-  // Make clipping path visable
-  var tempGroup = new Group([this.tempPath,this.textInput]);
+  // clone = same properties at time of creation, 
+  // but it starts blank since the content isn't set here
+  this.timerText = textInput.clone();
+  this.timerText.justification = 'center';
+  this.timerText.fontSize = 12;
+  this.timerText.content = "12s";
+
+  console.log(this.textInput);
+  console.log(this.nextText);
+  console.log(this.timerText);
+
+  // first object = clipping mask
+  // the rest are displayed as normal
+  var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText]);
   tempGroup.clipped = true;
 }
 
@@ -248,6 +263,16 @@ Ball.prototype = {
     this.textInput.point = this.point;
     this.textInput.point.x -= this.radius - 15;
     this.textInput.point.y += 10;
+
+    //new line
+    this.nextText.point = this.point;
+    this.nextText.point.x -= this.radius - 15;
+    this.nextText.point.y += 30;
+
+    this.timerText.point = this.point;
+    // this.timerText.point.x += this.radius;
+    this.timerText.point.y += this.radius - 25;
+
     this.updateShape();
   },
 
