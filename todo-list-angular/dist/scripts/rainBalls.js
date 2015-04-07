@@ -110,11 +110,12 @@ function getEmail(){
                   throw new Error(err.message);
               }
               // console.log("attempting to get email");
-              if (data.email[0].value.value != ""){
-                console.log("updating email");
-                userEmail = data.email[0].value.value;
+              if (data.email.length != 0){
+                if (data.email[0].value.value != ""){
+                  console.log("updating email");
+                  userEmail = data.email[0].value.value;
+                }
               }
-              
               // console.log(data.email[0].value.value);
        });
 
