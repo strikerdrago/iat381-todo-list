@@ -115,12 +115,26 @@ function getBalls(){
 
                       // console.log(ballitem.textInput[1].content);
                       var textInput = ballitem.textInput[1].content;
+                      var nextText = ballitem.nextText[1].content;
                       // if (textInput = " "){
                       //   console.log("empty!");
                         // textInput = "hello world";
                       // }
                       var tempBall = new Ball(radius, position, vector, textStyle);
                       tempBall.textInput.content = textInput;
+                      tempBall.nextText.content = nextText;
+
+                      var timeInMs = ballitem.alarmTimeMilliseconds;
+                      tempBall.alarmTimeMilliseconds = timeInMs;
+
+                      if (timeInMs != undefined){
+                        nextAlarm = new Date(timeInMs);
+                        monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+                        hmsParsed = nextAlarm.getHours() + ":"+ 
+                        nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+                        console.log(monthdayParsed + " " + hmsParsed);
+                        tempBall.timerText.content = hmsParsed;
+                      }
                       // console.log(tempBall);
                       balls.push(tempBall);
                     }
@@ -171,10 +185,11 @@ function onFrame() {
         balls[i].timeUntilAlarm = null;
         balls[i].timeUntilAlarmUnits = null;
 
+        balls[i].timerText.content = "";
+        pushBalls(balls);
         alert("To-do reminder: " + balls[i].textInput.content);
         
         // create a new instance of the Mandrill class with your API key
-
         if (userEmail) {
           // create a variable for the API call parameters
           var m = new mandrill.Mandrill('1v6xLdleNNB5t5G3RaHkBA');
@@ -255,9 +270,25 @@ function Ball(r, p, v, textInput) {
   // console.log(this.textInput);
   // this.textInput.bringToFront();
   this.textInput.position.x -= this.radius;
+  this.nextText = textInput.clone();
+  // change this to empty later, only have content when above 20 chars
+  this.nextText.content = ""; 
 
-  // Make clipping path visable
-  var tempGroup = new Group([this.tempPath,this.textInput]);
+  // clone = same properties at time of creation, 
+  // but it starts blank since the content isn't set here
+  this.timerText = textInput.clone();
+  this.timerText.justification = 'center';
+  this.timerText.fontSize = 12;
+
+  this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": new Date(this.alarmTimeMilliseconds);
+
+  // console.log(this.textInput);
+  // console.log(this.nextText);
+  // console.log(this.timerText);
+
+  // first object = clipping mask
+  // the rest are displayed as normal
+  var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText]);
   tempGroup.clipped = true;
 }
 
@@ -271,6 +302,20 @@ Ball.prototype = {
     this.textInput.point = this.point;
     this.textInput.point.x -= this.radius - 15;
     this.textInput.point.y += 10;
+
+    //new line
+    this.nextText.point = this.point;
+    this.nextText.point.x -= this.radius - 15;
+    this.nextText.point.y += 30;
+    this.nextText.fontSize = this.textInput.fontSize;
+
+    this.timerText.point = this.point;
+    // this.timerText.point.x += this.radius;
+    this.timerText.point.y += this.radius - 25;
+    // if (this.alarmTimeMilliseconds != undefined)
+    //  console.log(new Date(this.alarmTimeMilliseconds));
+    // this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": this.alarmTimeMilliseconds;
+
     this.updateShape();
   },
 
@@ -372,10 +417,6 @@ Ball.prototype = {
   updateBounds: function() {
     for (var i = 0; i < this.numSegment; i ++)
       this.boundOffset[i] = this.boundOffsetBuff[i];
-  },
-
-  splitText: function() {
-    console.log("splitting er up and such");
   }
 };
 
@@ -436,20 +477,20 @@ function onTap(ev) {
           break;
         }
       }
-      var tempBall = new Ball(
-        50, 
-        new Point(150,150), 
-        new Point({
-          angle: 360 * Math.random(),
-          length: Math.random() * 10
-        }),
-        new PointText({
-          fillColor: '#ffffff',
-          fontFamily: 'Open Sans',
-          fontWeight: 'bold',
-          fontSize: 18
-      }));
-      balls.push(tempBall);
+      // var tempBall = new Ball(
+      //   50, 
+      //   new Point(150,150), 
+      //   new Point({
+      //     angle: 360 * Math.random(),
+      //     length: Math.random() * 10
+      //   }),
+      //   new PointText({
+      //     fillColor: '#ffffff',
+      //     fontFamily: 'Open Sans',
+      //     fontWeight: 'bold',
+      //     fontSize: 18
+      // }));
+      // balls.push(tempBall);
   }
 
 }
@@ -533,6 +574,7 @@ function onPinch(ev) {
       if (currentBall.radius < minRadius) {
         currentBall.path.fillColor = '#ff0000';
         currentBall.textInput.content = 'DELETE!';
+        currentBall.nextText.visible = false;
       }
 
       else if (currentBall.radius > maxRadius) {
@@ -540,6 +582,7 @@ function onPinch(ev) {
         currentBall.radius = maxRadius;
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
         // console.log(currentBall.textInput.fontSize);
+        currentBall.nextText.visible = true;
         if (!creatingCircle) {
           currentBall.textInput.content = tempText;
         }
@@ -552,7 +595,8 @@ function onPinch(ev) {
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
         // console.log(currentBall.radius);
         // console.log(currentBall.textInput.fontSize);
-        console.log(currentBall.textInput.content.length);
+        // console.log(currentBall.textInput.content.length);
+        currentBall.nextText.visible = true;
         currentBall.textInput.fontSize = (currentBall.radius/120)*18;
 
         if (!creatingCircle) {
@@ -716,7 +760,7 @@ tappedTodo = function(){
   var tempContent = "";
 
   console.log(balls[ballIndex].textInput.content);
-  tempContent = balls[ballIndex].textInput.content;
+  tempContent = balls[ballIndex].textInput.content + balls[ballIndex].nextText.content;
   todofield.value = tempContent;
 
   // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
@@ -775,14 +819,29 @@ textEditSubmit = function() {
     default:
       break;
   }
-  if (todofield.value.length > 20){
+  if (todofield.value.length > -1 && todofield.value.length <= 20){
+    console.log('just right');
+    balls[ballIndex].nextText.content = "";
+  } else if (todofield.value.length > 20){
     console.log("halp I'm too big");
+    var slicedTextA = todofield.value.slice(0,20);
+    var slicedTextB = todofield.value.slice(20);
+    console.log(slicedTextA);
+    console.log(slicedTextB);
+    balls[ballIndex].textInput.content = slicedTextA;
+    balls[ballIndex].nextText.content = slicedTextB;
   }
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
   balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
 
   userEmail = $("#email-field").val();
+  nextAlarm = new Date(alarmTimeMilliseconds);
+  monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+  hmsParsed = nextAlarm.getHours() + ":"+ 
+  nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+  console.log(monthdayParsed + " " + hmsParsed);
+  balls[ballIndex].timerText.content = hmsParsed;
 
   console.log(balls[ballIndex]);
 
