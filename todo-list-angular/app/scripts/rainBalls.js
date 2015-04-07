@@ -91,52 +91,86 @@ function pushBall(ball, index){
   });
 }
 
+function pushBalls(balls){
+  sklad.open(dbName, options, function (err, conn) {
+    console.log("attempting to push all the balls");
+    var tempBalls = JSON.parse(JSON.stringify(balls));
+    // console.log(tempBalls);
+    // var data = [];
+    // console.log(data);
+    for (var i = 0; i < tempBalls.length; i++) {
+      console.log(tempBalls[i]);
+      var balltable = {index:i, value:tempBalls[i]};
+        conn.upsert('balltable', balltable, function (err, upsertedKeys) {
+          if (err) {
+              throw new Error(err.message);
+          }
+          console.log("That was ball " + upsertedKeys + " in the db");
+      });
+      // data.push(balltable);
+      // console.log(data);
+      // data.push(balltable: [{index:i, tempBalls[i]]});
+    };
+    // var data = {
+    //   balltable: [{index: index, value: tempBalls}
+    //   ]
+    // };
+    // console.log(data);
+    // conn.upsert('balltable', data, function (err, upsertedKeys) {
+    //     if (err) {
+    //         throw new Error(err.message);
+    //     }
+    //     console.log("That was ball " + upsertedKeys + " in the db");
+    // })
+  });
+}
+
 function deleteBall(){
   sklad.open(dbName, options, function (err, conn) {
     console.log("attempting to delete a single ball");
   });
 }
 
-pushBalls = function(balls){
-  sklad.open(dbName, options, function (err, conn) {
-    console.log("attempting to push balls");
-    test = JSON.stringify(balls);
+// pushBalls = function(balls){
+//   sklad.open(dbName, options, function (err, conn) {
+//     console.log("attempting to push balls");
+//     test = JSON.stringify(balls);
 
-    console.log(test);
-    console.log(JSON.parse(test));
-    testparsed = JSON.parse(test);
+//     console.log(test);
+//     console.log(JSON.parse(test));
+//     testparsed = JSON.parse(test);
 
-    testparsed.forEach(function(element,index){
-      // console.log(element);
-      // console.log(element.radius);
-      // newBall(element.radius, element.position, element.vector, element.textInput);
-      // testBall = new Ball(element.radius, element.position, element.vector, element.textInput);
-      // console.log(testBall);
-      // testcreatedball = Object.create(Ball.prototype, element);
-      // console.log(testcreatedball);
-        conn.upsert('balltable', element, function (err, upsertedKeys) {
-          if (err) {
-              throw new Error(err.message);
-          }
-          console.log(upsertedKeys);
-      })
-      //   conn.insert('balltable', element, function (err, insertedKeys) {
-      //     if (err) {
-      //         throw new Error(err.message);
-      //     }
-      //     console.log(insertedKeys);
-      // })
-    });
-    // var balltable = test;
-    // conn.insert('balltable', balltable, function (err, insertedKeys) {
-    //   // console.log(balltable);
-    //     if (err) {
-    //         throw new Error(err.message);
-    //     }
-    //     console.log(insertedKeys);
-    // })
-  });
-}
+//     testparsed.forEach(function(element,index){
+//       // console.log(element);
+//       // console.log(element.radius);
+//       // newBall(element.radius, element.position, element.vector, element.textInput);
+//       // testBall = new Ball(element.radius, element.position, element.vector, element.textInput);
+//       // console.log(testBall);
+//       // testcreatedball = Object.create(Ball.prototype, element);
+//       // console.log(testcreatedball);
+//         conn.upsert('balltable', element, function (err, upsertedKeys) {
+//           if (err) {
+//               throw new Error(err.message);
+//           }
+//           console.log(upsertedKeys);
+//       })
+//       //   conn.insert('balltable', element, function (err, insertedKeys) {
+//       //     if (err) {
+//       //         throw new Error(err.message);
+//       //     }
+//       //     console.log(insertedKeys);
+//       // })
+//     });
+//     // var balltable = test;
+//     // conn.insert('balltable', balltable, function (err, insertedKeys) {
+//     //   // console.log(balltable);
+//     //     if (err) {
+//     //         throw new Error(err.message);
+//     //     }
+//     //     console.log(insertedKeys);
+//     // })
+//   });
+// }
 
 function getBalls(){
   // console.log("attempting to get balls");
@@ -150,7 +184,7 @@ function getBalls(){
               // console.log(data.balltable);
               // data contains all needed records
               if (balls.length == 0 && data.balltable.length != 0){
-                console.log("we are happening");
+                // console.log("we are happening");
                 firstRun = false;
                 data.balltable.forEach(function(element,index){
                     if (element.key >= 0){
@@ -172,7 +206,7 @@ function getBalls(){
                           fontSize: 18
                       });
 
-                      console.log(ballitem.textInput[1].content);
+                      // console.log(ballitem.textInput[1].content);
                       var textInput = ballitem.textInput[1].content;
                       // if (textInput = " "){
                       //   console.log("empty!");
@@ -180,7 +214,7 @@ function getBalls(){
                       // }
                       var tempBall = new Ball(radius, position, vector, textStyle);
                       tempBall.textInput.content = textInput;
-                      console.log(tempBall);
+                      // console.log(tempBall);
                       balls.push(tempBall);
                     }
                 });
@@ -276,7 +310,7 @@ function Ball(r, p, v, textInput) {
   this.textInput = textInput;
   this.textInput.justification = 'left';
   this.textInput.content = "";
-  console.log(this.textInput);
+  // console.log(this.textInput);
   // this.textInput.bringToFront();
   this.textInput.position.x -= this.radius;
 
@@ -633,9 +667,11 @@ function onPan(ev) {
 
 function interactionEnd() {
   // remove the ball if it's too small
+  var index;
   if (currentBall) {
+    index = balls.indexOf(currentBall);
     if (currentBall.radius < minRadius) {
-      var index = balls.indexOf(currentBall);
+      // var index = balls.indexOf(currentBall);
       currentBall.path.remove();
       currentBall.tempPath.remove();
       currentBall.textInput.remove();
@@ -669,6 +705,11 @@ function interactionEnd() {
   interactingWithExistingCircle = false;
   currentBall = null;
   scrolling = false;
+
+  console.log(index);
+  if(index != undefined){
+    pushBalls(balls);
+  }
 }
 
 // function to check if a point is inside a circle
