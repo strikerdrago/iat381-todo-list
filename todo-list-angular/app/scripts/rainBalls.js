@@ -6,54 +6,11 @@ var options = {
     version: 2,
     migration: {
         '1': function (database) {
-            // This migration part starts when your code runs first time in the browser.
-            // This is a migration from "didn't exist" to "1" database version
-            var objStore = database.createObjectStore('users', {autoIncrement: true});
-            objStore.createIndex('email_search', 'email', {unique: true});
-            objStore.createIndex('name_search', 'firstname');
-        },
-        '2': function (database) {
-            // This migration part starts when your database migrates from "1" to "2" version
             var objStore = database.createObjectStore('foo_obj_store', {keyPath: 'foo'});
             var objStore = database.createObjectStore('balltable', {keyPath: 'index', autoIncrement: true});
         }
     }
 }
-
-sklad.open(dbName, options, function (err, conn) {
-
-  var words = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'.split(' ');
-    var data = {
-        users: [
-            {email: 'example1@gmail.com', firstname: 'John'},
-            {email: 'example2@gmail.com', firstname: 'Jack'},
-            {email: 'example3@gmail.com', firstname: 'Peter'},
-        ],
-        foo_obj_store: words.map(function (word) { return {foo: word}; })
-    };
-    
-    testAdd = function() {conn.insert(data, function (err, insertedKeys) {
-        if (err) {
-            throw new Error(err.message);
-        }
-        
-        // insertedKeys is object with information about inserted keys
-    });}
-
-     function updateRows() {
-      conn
-        .get({
-          users: {direction: sklad.DESC, index: 'name_search'}
-        }, function (err, data) {
-          if (err) { return console.error(err); }
-          
-          console.log(data.users);
-          for(var user in data.users){
-            console.log(data.users[user].key);
-          }
-        });
-    }
-});
 
 testFunction = function(){
   // sklad.open(dbName, options, function (err, conn) {
@@ -194,8 +151,8 @@ function getBalls(){
                       var position = new Point(ballitem.point[1], ballitem.point[2]);
                       // console.log(ballitem.vector);
                       var vector = new Point({
-                        angle: ballitem.vector[1],
-                        length: ballitem.vector[2]
+                        angle: 270,
+                        length: 3
                       });
                       // console.log(vector);
                       
@@ -708,6 +665,7 @@ function interactionEnd() {
 
   console.log(index);
   if(index != undefined){
+    console.log(balls[index]);
     pushBalls(balls);
   }
 }
@@ -782,6 +740,12 @@ textEditSubmit = function() {
 
     // });
 
+// Attempting to catch the user closing tab, but fails on mobile
+// window.onunload = window.onbeforeunload = function() {
+//   return "Bye now!";
+//   alert("Bye now!");
+// };
 
-
-
+// $( window ).unload(function() {
+//   return "Bye now!";
+// });
