@@ -1,5 +1,6 @@
 // kynd.info 2014
-// var dbName = 'dbtest' + Date.now();
+var firstRun = true;
+
 var dbName = 'dbtest';
 var options = {
     version: 2,
@@ -71,6 +72,26 @@ testFunction = function(){
   // });
 };
 
+function pushBall(ball){
+  sklad.open(dbName, options, function (err, conn) {
+    console.log("attempting to push a single ball");
+    var tempBall = JSON.parse(JSON.stringify(ball));
+    console.log(tempBall);
+    conn.upsert('balltable', tempBall, function (err, upsertedKeys) {
+        if (err) {
+            throw new Error(err.message);
+        }
+        console.log("That was ball " + upsertedKeys + " in the db");
+    })
+  });
+}
+
+function deleteBall(){
+  sklad.open(dbName, options, function (err, conn) {
+    console.log("attempting to delete a single ball");
+  });
+}
+
 pushBalls = function(balls){
   sklad.open(dbName, options, function (err, conn) {
     console.log("attempting to push balls");
@@ -88,15 +109,20 @@ pushBalls = function(balls){
       // console.log(testBall);
       // testcreatedball = Object.create(Ball.prototype, element);
       // console.log(testcreatedball);
-        conn.insert('balltable', element, function (err, insertedKeys) {
-        // console.log(balltable);
+        conn.upsert('balltable', element, function (err, upsertedKeys) {
           if (err) {
               throw new Error(err.message);
           }
-          console.log(insertedKeys);
+          console.log(upsertedKeys);
       })
+      //   conn.insert('balltable', element, function (err, insertedKeys) {
+      //     if (err) {
+      //         throw new Error(err.message);
+      //     }
+      //     console.log(insertedKeys);
+      // })
     });
-    var balltable = test;
+    // var balltable = test;
     // conn.insert('balltable', balltable, function (err, insertedKeys) {
     //   // console.log(balltable);
     //     if (err) {
@@ -108,6 +134,7 @@ pushBalls = function(balls){
 }
 
 function getBalls(){
+  // console.log("attempting to get balls");
     sklad.open(dbName, options, function (err, conn) {
       conn.get({
               balltable: {}
@@ -117,7 +144,9 @@ function getBalls(){
               }
               // console.log(data.balltable);
               // data contains all needed records
-              if (balls.length == 0){
+              if (balls.length == 0 && data.balltable.length != 0){
+                console.log("we are happening");
+                firstRun = false;
                 data.balltable.forEach(function(element,index){
                     if (element.key != 0){
                       var ballitem = element.value;
@@ -142,7 +171,7 @@ function getBalls(){
                       var textInput = ballitem.textInput[1].content;
                       // if (textInput = " "){
                       //   console.log("empty!");
-                        textInput = "hello world";
+                        // textInput = "hello world";
                       // }
                       var tempBall = new Ball(radius, position, vector, textStyle);
                       tempBall.textInput.content = textInput;
@@ -150,6 +179,9 @@ function getBalls(){
                       balls.push(tempBall);
                     }
                 });
+              } else if (data.balltable.length == 0){
+                console.log("nothing here");
+                firstRun = false;
               }
        });
        // conn.clear(['balltable'], function (err) {
@@ -161,27 +193,6 @@ function getBalls(){
        //  });
   });
 }
-
-function newBall(r, p, v, t){
-  anotherBall = new Ball(r, p, v, t);
-  console.log(anotherBall);
-}
-
-// function updateRows() {
-//   sklad.open(dbName, options, function (err, conn) {
-//     conn.get({
-//           users: {direction: sklad.DESC, index: 'name_search'}
-//         }, function (err, data) {
-//           if (err) { return console.error(err); }
-          
-//           console.log(data.users);
-//           for(var user in data.users){
-//             console.log(data.users[user].key);
-//           }
-//         });
-//   }
-
-// }
 
 var mc = new Hammer.Manager(document.getElementById('rainBalls'),
   {
@@ -214,6 +225,9 @@ function onFrame() {
     noitemsoverlay.style.display = "none";
   } else {
     noitemsoverlay.style.display = "block";
+    if (firstRun){
+      getBalls();
+    }
   }
 }
 
@@ -415,8 +429,8 @@ var scrolling = false;
 var tapped = false;
 
 function onTap(ev) {
-  testFunction();
-  getBalls();
+  // testFunction();
+  // getBalls();
   // testAdd();
   // updateRows();
   
@@ -454,6 +468,7 @@ function onPinch(ev) {
         // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
         // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
         currentBall = balls[i];
+        console.log("I am in ball " + i);
         // currentBall.path.fillColor = 'black';
         interactingWithExistingCircle = true;
         tempText = currentBall.textInput.content;
@@ -707,6 +722,7 @@ textEditSubmit = function() {
   tapped = false;
   interactingWithExistingCircle = false;
   balls[ballIndex].textInput.content = todofield.value;
+  pushBall(balls[ballIndex]);
   // overlay.style.display = "none";
   $( "#overlay" ).toggleClass( "shown" );
   $( "#todolist" ).hide();
