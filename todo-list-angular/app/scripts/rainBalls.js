@@ -6,7 +6,6 @@ var options = {
     version: 2,
     migration: {
         '1': function (database) {
-            var objStore = database.createObjectStore('foo_obj_store', {keyPath: 'foo'});
             var objStore = database.createObjectStore('balltable', {keyPath: 'index', autoIncrement: true});
         }
     }
@@ -50,84 +49,35 @@ function pushBall(ball, index){
 
 function pushBalls(balls){
   sklad.open(dbName, options, function (err, conn) {
-    console.log("attempting to push all the balls");
+    // console.log("attempting to push all the balls");
     var tempBalls = JSON.parse(JSON.stringify(balls));
-    // console.log(tempBalls);
-    // var data = [];
-    // console.log(data);
     for (var i = 0; i < tempBalls.length; i++) {
-      console.log(tempBalls[i]);
+      // console.log(tempBalls[i]);
       var balltable = {index:i, value:tempBalls[i]};
         conn.upsert('balltable', balltable, function (err, upsertedKeys) {
           if (err) {
               throw new Error(err.message);
           }
-          console.log("That was ball " + upsertedKeys + " in the db");
+          // console.log("That was ball " + upsertedKeys + " in the db");
       });
-      // data.push(balltable);
-      // console.log(data);
-      // data.push(balltable: [{index:i, tempBalls[i]]});
     };
-    // var data = {
-    //   balltable: [{index: index, value: tempBalls}
-    //   ]
-    // };
-    // console.log(data);
-    // conn.upsert('balltable', data, function (err, upsertedKeys) {
-    //     if (err) {
-    //         throw new Error(err.message);
-    //     }
-    //     console.log("That was ball " + upsertedKeys + " in the db");
-    // })
   });
 }
 
-function deleteBall(){
+function deleteBalls(){
   sklad.open(dbName, options, function (err, conn) {
-    console.log("attempting to delete a single ball");
+    // console.log("attempting to delete balls");
+
+    conn.clear('balltable', function (err) {
+        if (err) {
+            throw new Error(err.message);
+        }
+        // console.log("all clear!");
+        // objects stores are empty
+     });
   });
 }
 
-// pushBalls = function(balls){
-//   sklad.open(dbName, options, function (err, conn) {
-//     console.log("attempting to push balls");
-//     test = JSON.stringify(balls);
-
-//     console.log(test);
-//     console.log(JSON.parse(test));
-//     testparsed = JSON.parse(test);
-
-//     testparsed.forEach(function(element,index){
-//       // console.log(element);
-//       // console.log(element.radius);
-//       // newBall(element.radius, element.position, element.vector, element.textInput);
-//       // testBall = new Ball(element.radius, element.position, element.vector, element.textInput);
-//       // console.log(testBall);
-//       // testcreatedball = Object.create(Ball.prototype, element);
-//       // console.log(testcreatedball);
-//         conn.upsert('balltable', element, function (err, upsertedKeys) {
-//           if (err) {
-//               throw new Error(err.message);
-//           }
-//           console.log(upsertedKeys);
-//       })
-//       //   conn.insert('balltable', element, function (err, insertedKeys) {
-//       //     if (err) {
-//       //         throw new Error(err.message);
-//       //     }
-//       //     console.log(insertedKeys);
-//       // })
-//     });
-//     // var balltable = test;
-//     // conn.insert('balltable', balltable, function (err, insertedKeys) {
-//     //   // console.log(balltable);
-//     //     if (err) {
-//     //         throw new Error(err.message);
-//     //     }
-//     //     console.log(insertedKeys);
-//     // })
-//   });
-// }
 
 function getBalls(){
   // console.log("attempting to get balls");
@@ -296,7 +246,7 @@ Ball.prototype = {
     this.point += this.vector;
     this.vector.y += this.weight;
     this.textInput.point = this.point;
-    this.textInput.point.x -= this.radius - 10;
+    this.textInput.point.x -= this.radius - 15;
     this.textInput.point.y += 10;
     this.updateShape();
   },
@@ -399,6 +349,10 @@ Ball.prototype = {
   updateBounds: function() {
     for (var i = 0; i < this.numSegment; i ++)
       this.boundOffset[i] = this.boundOffsetBuff[i];
+  },
+
+  splitText: function() {
+    console.log("splitting er up and such");
   }
 };
 
@@ -547,6 +501,7 @@ function onPinch(ev) {
         // currentBall.path.fillColor = 'green';
         currentBall.radius = maxRadius;
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
+        // console.log(currentBall.textInput.fontSize);
         if (!creatingCircle) {
           currentBall.textInput.content = tempText;
         }
@@ -557,6 +512,11 @@ function onPinch(ev) {
       else {
         // console.log(String(Math.round((currentBall.radius/120)*360)+50));
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
+        // console.log(currentBall.radius);
+        // console.log(currentBall.textInput.fontSize);
+        console.log(currentBall.textInput.content.length);
+        currentBall.textInput.fontSize = (currentBall.radius/120)*18;
+
         if (!creatingCircle) {
           currentBall.textInput.content = tempText;
         }
@@ -649,6 +609,7 @@ function interactionEnd() {
       // console.log('index: ' + index);
       if (index > -1) {
           balls.splice(index, 1);
+          deleteBalls();
       }
     }
   }
@@ -678,8 +639,10 @@ function interactionEnd() {
   scrolling = false;
 
   console.log(index);
+  // Checks to see if a ball is interacting
+  // subsequently updates all the balls in the db
   if(index != undefined){
-    console.log(balls[index]);
+    // console.log(balls[index]);
     pushBalls(balls);
   }
 }
@@ -771,6 +734,9 @@ textEditSubmit = function() {
       break;
     default:
       break;
+  }
+  if (todofield.value.length > 20){
+    console.log("halp I'm too big");
   }
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
