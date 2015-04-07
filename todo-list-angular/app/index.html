@@ -26,13 +26,25 @@
     <div id="overlay" class="hidden">
       <div id="todolist">
         <form id="textEdit">
-          <input type="text" id="todofield" placeholder="What's your to-do?">
-          <div>
-            <button id="save-button" onclick="textEditSubmit()">Save</button>
+          <input class="input-field" type="text" id="todofield" placeholder="What's your to-do?">
+
+          <div id="timer-container">
+            <div>Remind me in</div>
+            <input class="input-field timer" id="numTimeUnits" type="number" min="0" max="9999">
+            <select class="input-field timer" id="timeUnits">
+              <option value="seconds">seconds</option>
+              <option value="minutes">minutes</option>
+              <option value="hours">hours</option>
+              <option value="days">days</option>
+            </select>
           </div>
+
+          <div>
+            <button class="input-field" id="save-button" onclick="textEditSubmit()">Save</button>
+          </div>
+
         </form>
       </div>
-      
     </div>
     <canvas id="rainBalls" resize></canvas>
     <!-- Add your site or application content here -->

@@ -24,6 +24,12 @@ function onFrame() {
     }
     for (var i = 0, l = balls.length; i < l; i++) {
       balls[i].iterate();
+      if ((balls[i].alarmTimeMilliseconds) && (balls[i].alarmTimeMilliseconds <= new Date().getTime())) {
+        balls[i].alarmTimeMilliseconds = null;
+        balls[i].timeUntilAlarm = null;
+        balls[i].timeUntilAlarmUnits = null;
+        alert("ALARM");
+      }
     }
   }
   
@@ -44,7 +50,9 @@ function Ball(r, p, v, textInput) {
   this.boundOffsetBuff = [];
   this.sidePoints = [];
   this.weight = -0.1;
-
+  this.timeUntilAlarm;
+  this.timeUntilAlarmUnits = "seconds";
+  this.alarmTimeMilliseconds;
 
   // this.textInput = textInput;
   // console.log(this.textInput);
@@ -227,6 +235,8 @@ var overlay = document.getElementById("overlay");
 var overlayDisplay = document.getElementById("overlay").style.display;
 var noitemsoverlay = document.getElementById("noitemstext");
 var todofield = document.getElementById("todofield");
+var numTimeUnits = $("#numTimeUnits");
+var timeUnits = $("#timeUnits");
 var scrolling = false;
 var tapped = false;
 
@@ -496,6 +506,10 @@ tappedTodo = function(){
   console.log(balls[ballIndex].textInput.content);
   tempContent = balls[ballIndex].textInput.content;
   todofield.value = tempContent;
+
+  numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
+  numTimeUnits.val(balls[ballIndex].timeUntilAlarmUnits);
+
   // console.log(overlay.style.display);
   // overlay.style.display = "block";
   $( "#overlay" ).toggleClass( "shown" );
@@ -515,6 +529,35 @@ textEditSubmit = function() {
   tapped = false;
   interactingWithExistingCircle = false;
   balls[ballIndex].textInput.content = todofield.value;
+
+  // parse time units with base 10
+  balls[ballIndex].timeUntilAlarm = +(numTimeUnits.val());
+  balls[ballIndex].timeUntilAlarmUnits = timeUnits.val();
+
+  var timeUnitsMultiplier = 0;
+
+  switch(timeUnits.val()) {
+    case "seconds":
+      timeUnitsMultiplier = 1000;
+      break;
+    case "minutes":
+      timeUnitsMultiplier = 60 * 1000;
+      break;
+    case "hours":
+      timeUnitsMultiplier = 60 * 60 * 1000;
+      break;
+    case "days":
+      timeUnitsMultiplier = 24 * 60 * 60 * 1000;
+      break;
+    default:
+      break;
+  }
+
+  var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
+  balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
+
+  console.log(balls[ballIndex]);
+
   // overlay.style.display = "none";
   $( "#overlay" ).toggleClass( "shown" );
   $( "#todolist" ).hide();
