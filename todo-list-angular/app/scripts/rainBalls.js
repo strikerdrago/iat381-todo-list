@@ -15,7 +15,7 @@ var options = {
         '2': function (database) {
             // This migration part starts when your database migrates from "1" to "2" version
             var objStore = database.createObjectStore('foo_obj_store', {keyPath: 'foo'});
-            var objStore = database.createObjectStore('balltable', {autoIncrement: true});
+            var objStore = database.createObjectStore('balltable', {keyPath: 'index', autoIncrement: true});
         }
     }
 }
@@ -72,12 +72,17 @@ testFunction = function(){
   // });
 };
 
-function pushBall(ball){
+function pushBall(ball, index){
   sklad.open(dbName, options, function (err, conn) {
     console.log("attempting to push a single ball");
     var tempBall = JSON.parse(JSON.stringify(ball));
     console.log(tempBall);
-    conn.upsert('balltable', tempBall, function (err, upsertedKeys) {
+    var data = {
+      balltable: [{index: index, value: tempBall}
+      ]
+    };
+    console.log(data);
+    conn.upsert(data, function (err, upsertedKeys) {
         if (err) {
             throw new Error(err.message);
         }
@@ -148,8 +153,8 @@ function getBalls(){
                 console.log("we are happening");
                 firstRun = false;
                 data.balltable.forEach(function(element,index){
-                    if (element.key != 0){
-                      var ballitem = element.value;
+                    if (element.key >= 0){
+                      var ballitem = element.value.value;
                       // console.log(ballitem);
                       var radius = ballitem.radius;
                       var position = new Point(ballitem.point[1], ballitem.point[2]);
@@ -433,11 +438,7 @@ function onTap(ev) {
   // getBalls();
   // testAdd();
   // updateRows();
-  
-  if (balls.length != 0){
-    console.log(balls);
-    pushBalls(balls);
-  }
+
   if(ev.type == 'singletap') {
     // loop through the balls array
       for (var i = 0; i < balls.length; i++) {
@@ -722,7 +723,8 @@ textEditSubmit = function() {
   tapped = false;
   interactingWithExistingCircle = false;
   balls[ballIndex].textInput.content = todofield.value;
-  pushBall(balls[ballIndex]);
+
+  pushBall(balls[ballIndex], ballIndex);
   // overlay.style.display = "none";
   $( "#overlay" ).toggleClass( "shown" );
   $( "#todolist" ).hide();
