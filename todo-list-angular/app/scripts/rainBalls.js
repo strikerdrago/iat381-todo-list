@@ -166,13 +166,33 @@ function onFrame() {
       balls[i].iterate();
 
       // fire the alarm!
-      if ((balls[i].alarmTimeMilliseconds) && (balls[i].alarmTimeMilliseconds <= new Date().getTime())) {
+      if ((balls[i].timeUntilAlarm) && (balls[i].alarmTimeMilliseconds) && (balls[i].alarmTimeMilliseconds <= new Date().getTime())) {
         balls[i].alarmTimeMilliseconds = null;
         balls[i].timeUntilAlarm = null;
         balls[i].timeUntilAlarmUnits = null;
 
-
         alert("To-do reminder: " + balls[i].textInput.content);
+        // $.ajax({
+        //     type: 'POST',
+        //     url: 'https://mandrillapp.com/api/1.0/messages/send.json',
+        //     data: {
+        //         'key': '1v6xLdleNNB5t5G3RaHkBA',
+        //         'message': {
+        //             'from_email': '',
+        //             'from_name': "Bubble to-dos",
+        //             'headers': {
+        //                 'Reply-To': ''
+        //             },
+        //             'subject': "To-do reminder: " + balls[i].textInput.content,
+        //             'text': "To-do reminder: " + balls[i].textInput.content,
+        //             'to': [{
+        //                 'email': 'dannyblackstock@gmail.com',
+        //                 'name': 'Danny Blackstock',
+        //                 'type': 'to'
+        //             }]
+        //         }
+        //     }
+        // });
       }
     }
   }
@@ -412,6 +432,20 @@ function onTap(ev) {
           break;
         }
       }
+      // var tempBall = new Ball(
+      //   50, 
+      //   new Point(150,150), 
+      //   new Point({
+      //     angle: 360 * Math.random(),
+      //     length: Math.random() * 10
+      //   }),
+      //   new PointText({
+      //     fillColor: '#ffffff',
+      //     fontFamily: 'Open Sans',
+      //     fontWeight: 'bold',
+      //     fontSize: 18
+      // }));
+      // balls.push(tempBall);
   }
 
 }
