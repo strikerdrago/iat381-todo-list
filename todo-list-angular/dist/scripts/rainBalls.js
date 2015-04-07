@@ -172,11 +172,13 @@ function getBalls(){
 
                       if (timeInMs != undefined){
                         nextAlarm = new Date(timeInMs);
+                        console.log(nextAlarm.toString());
                         monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
                         hmsParsed = nextAlarm.getHours() + ":"+ 
                         nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
                         console.log(monthdayParsed + " " + hmsParsed);
                         tempBall.timerText.content = hmsParsed;
+                        tempBall.timeUntilAlarm = ballitem.timeUntilAlarm;
                       }
                       // console.log(tempBall);
                       balls.push(tempBall);
