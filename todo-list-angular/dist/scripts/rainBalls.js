@@ -794,7 +794,7 @@ tappedTodo = function(){
   // console.log(overlay.style.display);
   // overlay.style.display = "block";
   $( "#overlay" ).toggleClass( "shown" );
-  $( "#textEdit" ).show();
+  $( "#textEdit" ).delay(200).show(0);
   // console.log("hsl("+balls[ballIndex].path.fillColor.hue+", 100%, 50%)");
   $( "#overlay" ).css("background-color", "hsl("+balls[ballIndex].path.fillColor.hue+", 75%, 50%)");
 }
@@ -876,7 +876,7 @@ textEditSubmit = function() {
   pushBall(balls[ballIndex], ballIndex);
   // overlay.style.display = "none";
   $( "#overlay" ).toggleClass( "shown" );
-  $( "#textEdit" ).hide();
+  $( "#textEdit" ).delay(200).hide(0);
 }
 
 $("#remind-me-button").on("click", function() {
