@@ -881,6 +881,7 @@ textEditSubmit = function() {
 
   userEmail = $("#email-field").val();
   pushEmail(userEmail);
+  // console.log(alarmTimeMilliseconds);
   if (alarmTimeMilliseconds > new Date().getTime()){
     balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
     console.log(alarmTimeMilliseconds);
@@ -890,6 +891,10 @@ textEditSubmit = function() {
     nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
     console.log(monthdayParsed + " " + hmsParsed);
     balls[ballIndex].timerText.content = hmsParsed;
+  } else if (alarmTimeMilliseconds <= new Date().getTime()){
+    console.log("wow");
+    balls[ballIndex].timerText.content = "";
+    balls[ballIndex].alarmTimeMilliseconds = undefined;
   }
 
   console.log(balls[ballIndex]);
