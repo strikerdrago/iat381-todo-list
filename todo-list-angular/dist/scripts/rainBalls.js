@@ -15,23 +15,6 @@ var options = {
     }
 }
 
-testFunction = function(){
-  // sklad.open(dbName, options, function (err, conn) {
-  //   console.log("test");
-  //     conn
-  //       .get({
-  //         users: {direction: sklad.DESC, index: 'name_search'}
-  //       }, function (err, data) {
-  //         if (err) { return console.error(err); }
-          
-  //         console.log(data.users);
-  //         for(var user in data.users){
-  //           console.log(data.users[user].key);
-  //         }
-  //       });
-  // });
-};
-
 function pushEmail(email){
   sklad.open(dbName, options, function (err, conn) {
     // console.log("attempting to push your email");
@@ -172,12 +155,15 @@ function getBalls(){
 
                       if (timeInMs != undefined){
                         nextAlarm = new Date(timeInMs);
-                        console.log(nextAlarm.toString());
-                        monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
-                        hmsParsed = nextAlarm.getHours() + ":"+ 
-                        nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
-                        console.log(monthdayParsed + " " + hmsParsed);
-                        tempBall.timerText.content = hmsParsed;
+                        parsedAlarm = nextAlarm.toString();
+                        parsedArray = parsedAlarm.split(" ", 5);
+                        // console.log(parsedArray);
+                        // monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+                        // hmsParsed = nextAlarm.getHours() + ":"+ 
+                        // nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+                        // console.log(monthdayParsed + " " + hmsParsed);
+                        tempBall.timerText.content = parsedArray[4];
+                        tempBall.dateText.content = parsedArray[1]+" "+parsedArray[2];
                         tempBall.timeUntilAlarm = ballitem.timeUntilAlarm;
                       }
                       // console.log(tempBall);
@@ -231,6 +217,7 @@ function onFrame() {
         balls[i].timeUntilAlarmUnits = null;
 
         balls[i].timerText.content = "";
+        balls[i].dateText.content = "";
         pushBalls(balls);
         alert("To-do reminder: " + balls[i].textInput.content);
         
@@ -328,13 +315,17 @@ function Ball(r, p, v, textInput) {
 
   this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": new Date(this.alarmTimeMilliseconds);
 
+  this.dateText = textInput.clone();
+  this.dateText.justification = 'center';
+  this.dateText.fontSize = 12;
+
   // console.log(this.textInput);
   // console.log(this.nextText);
   // console.log(this.timerText);
 
   // first object = clipping mask
   // the rest are displayed as normal
-  var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText]);
+  var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText, this.dateText]);
   tempGroup.clipped = true;
 }
 
@@ -358,6 +349,9 @@ Ball.prototype = {
     this.timerText.point = this.point;
     // this.timerText.point.x += this.radius;
     this.timerText.point.y += this.radius - 25;
+
+    this.dateText.point = this.point;
+    this.dateText.point.y += this.radius - 45;
     // if (this.alarmTimeMilliseconds != undefined)
     //  console.log(new Date(this.alarmTimeMilliseconds));
     // this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": this.alarmTimeMilliseconds;
@@ -504,10 +498,6 @@ var tapped = false;
 var userEmail;
 
 function onTap(ev) {
-  // testFunction();
-  // getBalls();
-  // testAdd();
-  // updateRows();
 
   if(ev.type == 'singletap') {
     // loop through the balls array
@@ -523,20 +513,6 @@ function onTap(ev) {
           break;
         }
       }
-      // var tempBall = new Ball(
-      //   50, 
-      //   new Point(150,150), 
-      //   new Point({
-      //     angle: 360 * Math.random(),
-      //     length: Math.random() * 10
-      //   }),
-      //   new PointText({
-      //     fillColor: '#ffffff',
-      //     fontFamily: 'Open Sans',
-      //     fontWeight: 'bold',
-      //     fontSize: 18
-      // }));
-      // balls.push(tempBall);
   }
 
 }
@@ -595,20 +571,6 @@ function onPinch(ev) {
 
 
       currentBallIndex = balls.indexOf(tempBall);
-      // tapped = true;
-      // tappedTodo();
-      // var tempGroup = new Group([text1,text2]);
-      // tempGroup.position += 50;
-
-      // balls.push(new Ball(
-      //   radius,
-      //   position,
-      //   new Point({
-      //     angle: 360 * Math.random(),
-      //     length: Math.random() * 10
-      //   }),
-      //   'derp'
-      // ));
     }
   }
 
@@ -621,6 +583,8 @@ function onPinch(ev) {
         currentBall.path.fillColor = '#ff0000';
         currentBall.textInput.content = 'DELETE!';
         currentBall.nextText.visible = false;
+        currentBall.timerText.visible = false;
+        currentBall.dateText.visible = false;
       }
 
       else if (currentBall.radius > maxRadius) {
@@ -629,6 +593,8 @@ function onPinch(ev) {
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
         // console.log(currentBall.textInput.fontSize);
         currentBall.nextText.visible = true;
+        currentBall.timerText.visible = true;
+        currentBall.dateText.visible = true;
         if (!creatingCircle) {
           currentBall.textInput.content = tempText;
         }
@@ -643,6 +609,8 @@ function onPinch(ev) {
         // console.log(currentBall.textInput.fontSize);
         // console.log(currentBall.textInput.content.length);
         currentBall.nextText.visible = true;
+        currentBall.timerText.visible = true;
+        currentBall.dateText.visible = true;
         currentBall.textInput.fontSize = (currentBall.radius/120)*18;
 
         if (!creatingCircle) {
@@ -888,11 +856,14 @@ textEditSubmit = function() {
     balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
     console.log(alarmTimeMilliseconds);
     nextAlarm = new Date(alarmTimeMilliseconds);
-    monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
-    hmsParsed = nextAlarm.getHours() + ":"+ 
-    nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
-    console.log(monthdayParsed + " " + hmsParsed);
-    balls[ballIndex].timerText.content = hmsParsed;
+    parsedAlarm = nextAlarm.toString();
+    parsedArray = parsedAlarm.split(" ", 5);
+    // monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+    // hmsParsed = nextAlarm.getHours() + ":"+ 
+    // nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+    // console.log(monthdayParsed + " " + hmsParsed);
+    balls[ballIndex].timerText.content = parsedArray[4];
+    balls[ballIndex].dateText.content = parsedArray[1]+" "+parsedArray[2];
   } else if (alarmTimeMilliseconds <= new Date().getTime()){
     console.log("wow");
     balls[ballIndex].timerText.content = "";
