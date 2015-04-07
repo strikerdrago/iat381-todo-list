@@ -172,27 +172,30 @@ function onFrame() {
         balls[i].timeUntilAlarmUnits = null;
 
         alert("To-do reminder: " + balls[i].textInput.content);
-        // $.ajax({
-        //     type: 'POST',
-        //     url: 'https://mandrillapp.com/api/1.0/messages/send.json',
-        //     data: {
-        //         'key': '1v6xLdleNNB5t5G3RaHkBA',
-        //         'message': {
-        //             'from_email': '',
-        //             'from_name': "Bubble to-dos",
-        //             'headers': {
-        //                 'Reply-To': ''
-        //             },
-        //             'subject': "To-do reminder: " + balls[i].textInput.content,
-        //             'text': "To-do reminder: " + balls[i].textInput.content,
-        //             'to': [{
-        //                 'email': 'dannyblackstock@gmail.com',
-        //                 'name': 'Danny Blackstock',
-        //                 'type': 'to'
-        //             }]
-        //         }
-        //     }
-        // });
+        
+        // create a new instance of the Mandrill class with your API key
+
+        if (userEmail) {
+          // create a variable for the API call parameters
+          var m = new mandrill.Mandrill('1v6xLdleNNB5t5G3RaHkBA');
+          console.log(userEmail);
+          var params = {
+              "message": {
+                  "from_email":"dannyblackstock@gmail.com",
+                  "to":[{"email":userEmail}],
+                  "subject": "To-do reminder: " + balls[i].textInput.content,
+                  "text": "To-do reminder: " + balls[i].textInput.content
+              }
+          };
+
+          m.messages.send(params, function(res) {
+              // log(res);
+              console.log(res);
+          }, function(err) {
+              // log(err);
+              console.log(res);
+          });
+        }
       }
     }
   }
@@ -411,6 +414,7 @@ var numTimeUnits = $("#numTimeUnits");
 var timeUnits = $("#timeUnits");
 var scrolling = false;
 var tapped = false;
+var userEmail;
 
 function onTap(ev) {
   // testFunction();
@@ -432,20 +436,20 @@ function onTap(ev) {
           break;
         }
       }
-      // var tempBall = new Ball(
-      //   50, 
-      //   new Point(150,150), 
-      //   new Point({
-      //     angle: 360 * Math.random(),
-      //     length: Math.random() * 10
-      //   }),
-      //   new PointText({
-      //     fillColor: '#ffffff',
-      //     fontFamily: 'Open Sans',
-      //     fontWeight: 'bold',
-      //     fontSize: 18
-      // }));
-      // balls.push(tempBall);
+      var tempBall = new Ball(
+        50, 
+        new Point(150,150), 
+        new Point({
+          angle: 360 * Math.random(),
+          length: Math.random() * 10
+        }),
+        new PointText({
+          fillColor: '#ffffff',
+          fontFamily: 'Open Sans',
+          fontWeight: 'bold',
+          fontSize: 18
+      }));
+      balls.push(tempBall);
   }
 
 }
@@ -718,6 +722,8 @@ tappedTodo = function(){
   // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
   numTimeUnits.val(balls[ballIndex].timeUntilAlarm);
 
+  $("#email-field").val(userEmail);
+
   if (numTimeUnits.val()) {
     $("#remind-me-button").hide();
     $("#timer-container").show();
@@ -775,6 +781,8 @@ textEditSubmit = function() {
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
   balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
+
+  userEmail = $("#email-field").val();
 
   console.log(balls[ballIndex]);
 
