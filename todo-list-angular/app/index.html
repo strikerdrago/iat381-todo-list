@@ -28,8 +28,10 @@
         <form id="textEdit">
           <input class="input-field" type="text" id="todofield" placeholder="What's your to-do?">
 
+          <button class="input-field" id="remind-me-button">Remind me...</button>
+
           <div id="timer-container">
-            <div>Remind me in</div>
+            <span id="remind-me-in">Remind me in</span>
             <input class="input-field timer" id="numTimeUnits" type="number" min="0" max="9999">
             <select class="input-field timer" id="timeUnits">
               <option value="seconds">seconds</option>
@@ -37,6 +39,7 @@
               <option value="hours">hours</option>
               <option value="days">days</option>
             </select>
+            <button id="cancel-button"></button>
           </div>
 
           <div>

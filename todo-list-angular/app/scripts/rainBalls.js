@@ -24,11 +24,15 @@ function onFrame() {
     }
     for (var i = 0, l = balls.length; i < l; i++) {
       balls[i].iterate();
+
+      // fire the alarm!
       if ((balls[i].alarmTimeMilliseconds) && (balls[i].alarmTimeMilliseconds <= new Date().getTime())) {
         balls[i].alarmTimeMilliseconds = null;
         balls[i].timeUntilAlarm = null;
         balls[i].timeUntilAlarmUnits = null;
-        alert("ALARM");
+
+
+        alert("To-do reminder: " + balls[i].textInput.content);
       }
     }
   }
@@ -507,8 +511,17 @@ tappedTodo = function(){
   tempContent = balls[ballIndex].textInput.content;
   todofield.value = tempContent;
 
-  numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
-  numTimeUnits.val(balls[ballIndex].timeUntilAlarmUnits);
+  // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
+  numTimeUnits.val(balls[ballIndex].timeUntilAlarm);
+
+  if (numTimeUnits.val()) {
+    $("#remind-me-button").hide();
+    $("#timer-container").show();
+  }
+  else {
+    $("#remind-me-button").show();
+    $("#timer-container").hide();
+  }
 
   // console.log(overlay.style.display);
   // overlay.style.display = "block";
@@ -562,3 +575,15 @@ textEditSubmit = function() {
   $( "#overlay" ).toggleClass( "shown" );
   $( "#todolist" ).hide();
 }
+
+$("#remind-me-button").on("click", function() {
+  $("#remind-me-button").slideUp(200);
+  $("#timer-container").show();
+});
+
+$("#cancel-button").on("click", function() {
+  numTimeUnits.val(null);
+  timeUnits.val("seconds");
+  $("#timer-container").slideUp(200);
+  $("#remind-me-button").show();
+});
