@@ -178,7 +178,9 @@ function getBalls(){
               } else if (data.balltable.length == 0){
                 console.log("nothing here");
                 firstRun = false;
+
               }
+              console.log("DONE GETTING BALLS");
        });
        // conn.clear(['balltable'], function (err) {
        //      if (err) {
@@ -898,8 +900,8 @@ $("#cancel-button").on("click", function() {
   $("#remind-me-button").show();
 });
 
-
-    
+$("#loader-container").addClass("hiddenLoader");
+$("#loader").hide("");
 
     // $("#rainBalls").click(function(){
     //     if(balls.length != 0){
