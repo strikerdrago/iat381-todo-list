@@ -26,8 +26,8 @@ canvas[resize] {
   background-color: gray;
   /*display: none;*/
   position: absolute;
-  border-radius: 100%;
-  -webkit-transition: opacity 0.2s, border-radius 0.2s, -webkit-transform 0.2s;  /* For Safari 3.1 to 6.0 */
+  border-radius: 100%;  /* For Safari 3.1 to 6.0 */
+          transition: opacity 0.2s, border-radius 0.2s, -webkit-transform 0.2s;
           transition: opacity 0.2s, border-radius 0.2s, transform 0.2s;
   -webkit-transform: translateZ(-500px);
           transform: translateZ(-500px);

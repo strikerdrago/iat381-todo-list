@@ -1,4 +1,9 @@
 // kynd.info 2014
+
+$("#save-button").on("click", function() {
+  textEditSubmit();
+});
+
 var firstRun = true;
 
 var dbName = 'dbtest';
@@ -22,7 +27,7 @@ function pushEmail(email){
       email: [{index: 1, value: email}
       ]
     };
-    console.log(data);
+    // console.log(data);
     conn.upsert(data, function (err, upsertedKeys) {
         if (err) {
             throw new Error(err.message);
@@ -34,19 +39,19 @@ function pushEmail(email){
 
 function pushBall(ball, index){
   sklad.open(dbName, options, function (err, conn) {
-    console.log("attempting to push a single ball");
+    // console.log("attempting to push a single ball");
     var tempBall = JSON.parse(JSON.stringify(ball));
-    console.log(tempBall);
+    // console.log(tempBall);
     var data = {
       balltable: [{index: index, value: tempBall}
       ]
     };
-    console.log(data);
+    // console.log(data);
     conn.upsert(data, function (err, upsertedKeys) {
         if (err) {
             throw new Error(err.message);
         }
-        console.log("That was ball " + upsertedKeys + " in the db");
+        // console.log("That was ball " + upsertedKeys + " in the db");
     })
   });
 }
@@ -197,7 +202,7 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
 mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
-mc.add( new Hammer.Press({ time: '200' }) );
+// mc.add( new Hammer.Press({ time: '200' }) );
 mc.add( new Hammer.Tap({ event: 'singletap' }) );
 
 function onFrame() {
@@ -215,6 +220,7 @@ function onFrame() {
         balls[i].alarmTimeMilliseconds = null;
         balls[i].timeUntilAlarm = null;
         balls[i].timeUntilAlarmUnits = null;
+        numTimeUnits.val(null);
 
         balls[i].timerText.content = "";
         balls[i].dateText.content = "";
@@ -498,7 +504,7 @@ var tapped = false;
 var userEmail;
 
 function onTap(ev) {
-
+  console.log("TAP");
   if(ev.type == 'singletap') {
     // loop through the balls array
       for (var i = 0; i < balls.length; i++) {
@@ -769,20 +775,21 @@ function inCircle(center_x, center_y, radius, x, y) {
   }
 }
 
-tappedTodo = function(){
+function tappedTodo() {
   var ballIndex = currentBallIndex;
   var tempContent = "";
 
-  console.log(balls[ballIndex].textInput.content);
+  // console.log(balls[ballIndex].textInput.content);
   tempContent = balls[ballIndex].textInput.content + balls[ballIndex].nextText.content;
   todofield.value = tempContent;
 
   // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
-  numTimeUnits.val(balls[ballIndex].timeUntilAlarm);
+  numTimeUnits.val(+(balls[ballIndex].timeUntilAlarm));
 
   $("#email-field").val(userEmail);
+  // console.log(+(numTimeUnits.val()));
 
-  if (numTimeUnits.val()) {
+  if (+(numTimeUnits.val()) > 0) {
     $("#remind-me-button").hide();
     $("#timer-container").show();
   }
@@ -794,15 +801,15 @@ tappedTodo = function(){
   // console.log(overlay.style.display);
   // overlay.style.display = "block";
   $( "#overlay" ).toggleClass( "shown" );
-  $( "#todolist" ).show();
+  $( "#todolist" ).delay(100).show(0);
   // console.log("hsl("+balls[ballIndex].path.fillColor.hue+", 100%, 50%)");
   $( "#overlay" ).css("background-color", "hsl("+balls[ballIndex].path.fillColor.hue+", 75%, 50%)");
 }
 
 // Text Input script currently in progress
-textEditSubmit = function() {
+function textEditSubmit() {
   var ballIndex = currentBallIndex;
-  console.log(ballIndex);
+  console.log("save button pressed");
   if (balls.length > 0) {
      // console.log(balls[ballIndex].textInput.content);
      // tempContent = balls[ballIndex].textInput.content;
@@ -834,14 +841,14 @@ textEditSubmit = function() {
       break;
   }
   if (todofield.value.length > -1 && todofield.value.length <= 20){
-    console.log('just right');
+    // console.log('just right');
     balls[ballIndex].nextText.content = "";
   } else if (todofield.value.length > 20){
-    console.log("halp I'm too big");
+    // console.log("halp I'm too big");
     var slicedTextA = todofield.value.slice(0,20);
     var slicedTextB = todofield.value.slice(20);
-    console.log(slicedTextA);
-    console.log(slicedTextB);
+    // console.log(slicedTextA);
+    // console.log(slicedTextB);
     balls[ballIndex].textInput.content = slicedTextA;
     balls[ballIndex].nextText.content = slicedTextB;
   }
@@ -854,7 +861,7 @@ textEditSubmit = function() {
   // console.log(alarmTimeMilliseconds);
   if (alarmTimeMilliseconds > new Date().getTime()){
     balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
-    console.log(alarmTimeMilliseconds);
+    // console.log(alarmTimeMilliseconds);
     nextAlarm = new Date(alarmTimeMilliseconds);
     parsedAlarm = nextAlarm.toString();
     parsedArray = parsedAlarm.split(" ", 5);
@@ -865,13 +872,13 @@ textEditSubmit = function() {
     balls[ballIndex].timerText.content = parsedArray[4];
     balls[ballIndex].dateText.content = parsedArray[1]+" "+parsedArray[2];
   } else if (alarmTimeMilliseconds <= new Date().getTime()){
-    console.log("wow");
+    // console.log("wow");
     balls[ballIndex].timerText.content = "";
     balls[ballIndex].dateText.content = "";
     balls[ballIndex].alarmTimeMilliseconds = undefined;
   }
 
-  console.log(balls[ballIndex]);
+  // console.log(balls[ballIndex]);
 
   pushBall(balls[ballIndex], ballIndex);
   // overlay.style.display = "none";
