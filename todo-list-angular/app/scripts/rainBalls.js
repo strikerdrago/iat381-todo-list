@@ -7,42 +7,46 @@ var options = {
     migration: {
         '1': function (database) {
             var objStore = database.createObjectStore('balltable', {keyPath: 'index', autoIncrement: true});
+            
+        },
+        '2': function (database) {
+            var objStore = database.createObjectStore('email', {keyPath: 'index'});
         }
     }
 }
 
-testFunction = function(){
-  // sklad.open(dbName, options, function (err, conn) {
-  //   console.log("test");
-  //     conn
-  //       .get({
-  //         users: {direction: sklad.DESC, index: 'name_search'}
-  //       }, function (err, data) {
-  //         if (err) { return console.error(err); }
-          
-  //         console.log(data.users);
-  //         for(var user in data.users){
-  //           console.log(data.users[user].key);
-  //         }
-  //       });
-  // });
-};
-
-function pushBall(ball, index){
+function pushEmail(email){
   sklad.open(dbName, options, function (err, conn) {
-    console.log("attempting to push a single ball");
-    var tempBall = JSON.parse(JSON.stringify(ball));
-    console.log(tempBall);
+    // console.log("attempting to push your email");
     var data = {
-      balltable: [{index: index, value: tempBall}
+      email: [{index: 1, value: email}
       ]
     };
-    console.log(data);
+    // console.log(data);
     conn.upsert(data, function (err, upsertedKeys) {
         if (err) {
             throw new Error(err.message);
         }
         console.log("That was ball " + upsertedKeys + " in the db");
+    })
+  });
+}
+
+function pushBall(ball, index){
+  sklad.open(dbName, options, function (err, conn) {
+    // console.log("attempting to push a single ball");
+    var tempBall = JSON.parse(JSON.stringify(ball));
+    // console.log(tempBall);
+    var data = {
+      balltable: [{index: index, value: tempBall}
+      ]
+    };
+    // console.log(data);
+    conn.upsert(data, function (err, upsertedKeys) {
+        if (err) {
+            throw new Error(err.message);
+        }
+        // console.log("That was ball " + upsertedKeys + " in the db");
     })
   });
 }
@@ -78,6 +82,28 @@ function deleteBalls(){
   });
 }
 
+
+function getEmail(){
+  // console.log("attempting to get balls");
+    sklad.open(dbName, options, function (err, conn) {
+      conn.get({
+              email: {}
+          }, function (err, data) {
+              if (err) {
+                  throw new Error(err.message);
+              }
+              // console.log("attempting to get email");
+              if (data.email.length != 0){
+                if (data.email[0].value.value != ""){
+                  console.log("updating email");
+                  userEmail = data.email[0].value.value;
+                }
+              }
+              // console.log(data.email[0].value.value);
+       });
+
+  });
+}
 
 function getBalls(){
   // console.log("attempting to get balls");
@@ -129,11 +155,16 @@ function getBalls(){
 
                       if (timeInMs != undefined){
                         nextAlarm = new Date(timeInMs);
-                        monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
-                        hmsParsed = nextAlarm.getHours() + ":"+ 
-                        nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
-                        console.log(monthdayParsed + " " + hmsParsed);
-                        tempBall.timerText.content = hmsParsed;
+                        parsedAlarm = nextAlarm.toString();
+                        parsedArray = parsedAlarm.split(" ", 5);
+                        // console.log(parsedArray);
+                        // monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+                        // hmsParsed = nextAlarm.getHours() + ":"+ 
+                        // nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+                        // console.log(monthdayParsed + " " + hmsParsed);
+                        tempBall.timerText.content = parsedArray[4];
+                        tempBall.dateText.content = parsedArray[1]+" "+parsedArray[2];
+                        tempBall.timeUntilAlarm = ballitem.timeUntilAlarm;
                       }
                       // console.log(tempBall);
                       balls.push(tempBall);
@@ -186,6 +217,7 @@ function onFrame() {
         balls[i].timeUntilAlarmUnits = null;
 
         balls[i].timerText.content = "";
+        balls[i].dateText.content = "";
         pushBalls(balls);
         alert("To-do reminder: " + balls[i].textInput.content);
         
@@ -220,6 +252,7 @@ function onFrame() {
   } else {
     noitemsoverlay.style.display = "block";
     if (firstRun){
+      getEmail();
       getBalls();
     }
   }
@@ -282,13 +315,17 @@ function Ball(r, p, v, textInput) {
 
   this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": new Date(this.alarmTimeMilliseconds);
 
+  this.dateText = textInput.clone();
+  this.dateText.justification = 'center';
+  this.dateText.fontSize = 12;
+
   // console.log(this.textInput);
   // console.log(this.nextText);
   // console.log(this.timerText);
 
   // first object = clipping mask
   // the rest are displayed as normal
-  var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText]);
+  var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText, this.dateText]);
   tempGroup.clipped = true;
 }
 
@@ -312,6 +349,9 @@ Ball.prototype = {
     this.timerText.point = this.point;
     // this.timerText.point.x += this.radius;
     this.timerText.point.y += this.radius - 25;
+
+    this.dateText.point = this.point;
+    this.dateText.point.y += this.radius - 45;
     // if (this.alarmTimeMilliseconds != undefined)
     //  console.log(new Date(this.alarmTimeMilliseconds));
     // this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": this.alarmTimeMilliseconds;
@@ -458,11 +498,7 @@ var tapped = false;
 var userEmail;
 
 function onTap(ev) {
-  // testFunction();
-  // getBalls();
-  // testAdd();
-  // updateRows();
-
+  console.log("TAP");
   if(ev.type == 'singletap') {
     // loop through the balls array
       for (var i = 0; i < balls.length; i++) {
@@ -477,20 +513,6 @@ function onTap(ev) {
           break;
         }
       }
-      // var tempBall = new Ball(
-      //   50, 
-      //   new Point(150,150), 
-      //   new Point({
-      //     angle: 360 * Math.random(),
-      //     length: Math.random() * 10
-      //   }),
-      //   new PointText({
-      //     fillColor: '#ffffff',
-      //     fontFamily: 'Open Sans',
-      //     fontWeight: 'bold',
-      //     fontSize: 18
-      // }));
-      // balls.push(tempBall);
   }
 
 }
@@ -549,20 +571,6 @@ function onPinch(ev) {
 
 
       currentBallIndex = balls.indexOf(tempBall);
-      // tapped = true;
-      // tappedTodo();
-      // var tempGroup = new Group([text1,text2]);
-      // tempGroup.position += 50;
-
-      // balls.push(new Ball(
-      //   radius,
-      //   position,
-      //   new Point({
-      //     angle: 360 * Math.random(),
-      //     length: Math.random() * 10
-      //   }),
-      //   'derp'
-      // ));
     }
   }
 
@@ -575,6 +583,8 @@ function onPinch(ev) {
         currentBall.path.fillColor = '#ff0000';
         currentBall.textInput.content = 'DELETE!';
         currentBall.nextText.visible = false;
+        currentBall.timerText.visible = false;
+        currentBall.dateText.visible = false;
       }
 
       else if (currentBall.radius > maxRadius) {
@@ -583,6 +593,8 @@ function onPinch(ev) {
         currentBall.path.fillColor.hue = String(Math.round((currentBall.radius/120)*360));
         // console.log(currentBall.textInput.fontSize);
         currentBall.nextText.visible = true;
+        currentBall.timerText.visible = true;
+        currentBall.dateText.visible = true;
         if (!creatingCircle) {
           currentBall.textInput.content = tempText;
         }
@@ -597,6 +609,8 @@ function onPinch(ev) {
         // console.log(currentBall.textInput.fontSize);
         // console.log(currentBall.textInput.content.length);
         currentBall.nextText.visible = true;
+        currentBall.timerText.visible = true;
+        currentBall.dateText.visible = true;
         currentBall.textInput.fontSize = (currentBall.radius/120)*18;
 
         if (!creatingCircle) {
@@ -759,7 +773,7 @@ tappedTodo = function(){
   var ballIndex = currentBallIndex;
   var tempContent = "";
 
-  console.log(balls[ballIndex].textInput.content);
+  // console.log(balls[ballIndex].textInput.content);
   tempContent = balls[ballIndex].textInput.content + balls[ballIndex].nextText.content;
   todofield.value = tempContent;
 
@@ -788,7 +802,7 @@ tappedTodo = function(){
 // Text Input script currently in progress
 textEditSubmit = function() {
   var ballIndex = currentBallIndex;
-  console.log(ballIndex);
+  console.log("save button pressed");
   if (balls.length > 0) {
      // console.log(balls[ballIndex].textInput.content);
      // tempContent = balls[ballIndex].textInput.content;
@@ -820,30 +834,44 @@ textEditSubmit = function() {
       break;
   }
   if (todofield.value.length > -1 && todofield.value.length <= 20){
-    console.log('just right');
+    // console.log('just right');
     balls[ballIndex].nextText.content = "";
   } else if (todofield.value.length > 20){
-    console.log("halp I'm too big");
+    // console.log("halp I'm too big");
     var slicedTextA = todofield.value.slice(0,20);
     var slicedTextB = todofield.value.slice(20);
-    console.log(slicedTextA);
-    console.log(slicedTextB);
+    // console.log(slicedTextA);
+    // console.log(slicedTextB);
     balls[ballIndex].textInput.content = slicedTextA;
     balls[ballIndex].nextText.content = slicedTextB;
   }
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
-  balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
+  
 
   userEmail = $("#email-field").val();
-  nextAlarm = new Date(alarmTimeMilliseconds);
-  monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
-  hmsParsed = nextAlarm.getHours() + ":"+ 
-  nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
-  console.log(monthdayParsed + " " + hmsParsed);
-  balls[ballIndex].timerText.content = hmsParsed;
+  pushEmail(userEmail);
+  // console.log(alarmTimeMilliseconds);
+  if (alarmTimeMilliseconds > new Date().getTime()){
+    balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
+    // console.log(alarmTimeMilliseconds);
+    nextAlarm = new Date(alarmTimeMilliseconds);
+    parsedAlarm = nextAlarm.toString();
+    parsedArray = parsedAlarm.split(" ", 5);
+    // monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
+    // hmsParsed = nextAlarm.getHours() + ":"+ 
+    // nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
+    // console.log(monthdayParsed + " " + hmsParsed);
+    balls[ballIndex].timerText.content = parsedArray[4];
+    balls[ballIndex].dateText.content = parsedArray[1]+" "+parsedArray[2];
+  } else if (alarmTimeMilliseconds <= new Date().getTime()){
+    // console.log("wow");
+    balls[ballIndex].timerText.content = "";
+    balls[ballIndex].dateText.content = "";
+    balls[ballIndex].alarmTimeMilliseconds = undefined;
+  }
 
-  console.log(balls[ballIndex]);
+  // console.log(balls[ballIndex]);
 
   pushBall(balls[ballIndex], ballIndex);
   // overlay.style.display = "none";
