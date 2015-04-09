@@ -1,4 +1,9 @@
 // kynd.info 2014
+
+$("#save-button").on("click", function() {
+  textEditSubmit();
+});
+
 var firstRun = true;
 
 var dbName = 'dbtest';
@@ -770,7 +775,7 @@ function inCircle(center_x, center_y, radius, x, y) {
   }
 }
 
-tappedTodo = function(){
+function tappedTodo() {
   var ballIndex = currentBallIndex;
   var tempContent = "";
 
@@ -802,7 +807,7 @@ tappedTodo = function(){
 }
 
 // Text Input script currently in progress
-textEditSubmit = function() {
+function textEditSubmit() {
   var ballIndex = currentBallIndex;
   console.log("save button pressed");
   if (balls.length > 0) {
