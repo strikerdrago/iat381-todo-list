@@ -197,7 +197,7 @@ var mc = new Hammer.Manager(document.getElementById('rainBalls'),
 
 mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
 mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith([mc.get('pan')]);
-mc.add( new Hammer.Press({ time: '200' }) );
+// mc.add( new Hammer.Press({ time: '200' }) );
 mc.add( new Hammer.Tap({ event: 'singletap' }) );
 
 function onFrame() {
@@ -215,6 +215,7 @@ function onFrame() {
         balls[i].alarmTimeMilliseconds = null;
         balls[i].timeUntilAlarm = null;
         balls[i].timeUntilAlarmUnits = null;
+        numTimeUnits.val(null);
 
         balls[i].timerText.content = "";
         balls[i].dateText.content = "";
@@ -778,11 +779,12 @@ tappedTodo = function(){
   todofield.value = tempContent;
 
   // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
-  numTimeUnits.val(balls[ballIndex].timeUntilAlarm);
+  numTimeUnits.val(+(balls[ballIndex].timeUntilAlarm));
 
   $("#email-field").val(userEmail);
+  // console.log(+(numTimeUnits.val()));
 
-  if (numTimeUnits.val()) {
+  if (+(numTimeUnits.val()) > 0) {
     $("#remind-me-button").hide();
     $("#timer-container").show();
   }
@@ -794,7 +796,7 @@ tappedTodo = function(){
   // console.log(overlay.style.display);
   // overlay.style.display = "block";
   $( "#overlay" ).toggleClass( "shown" );
-  $( "#todolist" ).show();
+  $( "#todolist" ).delay(100).show(0);
   // console.log("hsl("+balls[ballIndex].path.fillColor.hue+", 100%, 50%)");
   $( "#overlay" ).css("background-color", "hsl("+balls[ballIndex].path.fillColor.hue+", 75%, 50%)");
 }
