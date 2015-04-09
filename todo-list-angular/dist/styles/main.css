@@ -103,11 +103,88 @@ canvas[resize] {
   color: white;
 }
 
-/*#save-button {
+#loader-container {
+  /*position: absolute;*/
   width: 100%;
-  height: 50px;
-  font-size: 1em;
+  height: 100%;
   background-color: white;
-  border: 0;
-  margin-top: 10px;
-}*/
+  color: white;
+  text-align: center;
+  /*padding: 50% 0 50% 0;*/
+  position: relative;
+  top: -10%;
+  right: -5%;
+  transform: translateY(-50%);
+
+  -webkit-transform: rotate(30deg); /* Chrome, Safari, Opera */ /* IE 9 */
+          transform: rotate(30deg);
+          transition: opacity 0.5s, height 0.5s;
+}
+
+#loader-container.hiddenLoader {
+  opacity: 0;
+  height: 0;
+}
+
+#loader {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  -webkit-animation: sk-rotatePlane 1.2s infinite ease-in-out;
+          animation: sk-rotatePlane 1.2s infinite ease-in-out;
+}
+
+#loader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-bottom: 29px solid red;
+  border-left: 29px solid white;
+  border-right: 29px solid white;
+  width: 42px;
+  height: 0;
+}
+
+#loader:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 29px solid red;
+  border-left: 29px solid white;
+  border-right: 29px solid white;
+  width: 42px;
+  height: 0;
+}
+
+@-webkit-keyframes sk-rotatePlane {
+  0% {
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
+
+  50% {
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); }
+
+  100% {
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
+
+@keyframes sk-rotatePlane {
+  0% {
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
+
+  50% {
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); }
+
+  100% {
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
