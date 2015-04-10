@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="todoListAngularApp">
+  <body>
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -33,7 +33,7 @@
         <form id="textEdit">
           <input class="input-field" type="text" id="todofield" placeholder="What's your to-do?">
 
-          <button class="input-field" id="remind-me-button">Remind me...</button>
+          <button class="input-field" type="button" id="remind-me-button">Remind me...</button>
 
           <div id="timer-container">
             <span id="remind-me-in">Remind me in</span>
@@ -44,12 +44,12 @@
               <option value="hours">hours</option>
               <option value="days">days</option>
             </select>
-            <button id="cancel-button"></button>
+            <button type="button" id="cancel-button"></button>
             <input class="input-field" type="email" id="email-field" placeholder="Enter your email for notifications">
           </div>
 
           <div>
-            <button class="input-field" id="save-button">Done</button>
+            <button class="input-field" type="button" id="save-button">Done</button>
           </div>
 
         </form>
@@ -57,7 +57,6 @@
     </div>
     <canvas id="rainBalls" resize></canvas>
     <!-- Add your site or application content here -->
-      <div ng-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID
      <script>
@@ -81,13 +80,6 @@
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/paper/dist/paper-full.js"></script>
     <script src="bower_components/hammer.js/hammer.js"></script>
     <script src="bower_components/sklad/sklad.js"></script>
@@ -96,9 +88,6 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/main.js"></script>
-    <script src="scripts/controllers/about.js"></script>
     <!-- endbuild -->
     <script type="text/paperscript" src="scripts/rainBalls.js" canvas="rainBalls"></script>
 
