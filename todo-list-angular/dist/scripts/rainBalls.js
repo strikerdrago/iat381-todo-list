@@ -4,6 +4,21 @@ $("#save-button").on("click", function() {
   textEditSubmit();
 });
 
+$("#remind-me-button").on("click", function() {
+  $("#remind-me-button").slideUp(200);
+  $("#timer-container").show();
+});
+
+$("#cancel-button").on("click", function() {
+  numTimeUnits.val(null);
+  timeUnits.val("seconds");
+  $("#timer-container").slideUp(200);
+  $("#remind-me-button").show();
+});
+
+$("#loader-container").addClass("hiddenLoader");
+$("#loader").hide("");
+
 var firstRun = true;
 
 var dbName = 'dbtest';
@@ -534,8 +549,7 @@ function onPinch(ev) {
     for (var i = 0; i < balls.length; i++) {
       // check if the pinch point was in a circle
       if (inCircle(balls[i].point.x, balls[i].point.y, balls[i].radius, ev.center.x, ev.center.y + paper.view.bounds.y) && !interactingWithExistingCircle) {
-        // console.log('ball center: ' + balls[i].point.x + ', ' + balls[i].point.y + ', radius is ' + balls[i].radius);
-        // console.log('pinch center: ' + ev.center.x + ', ' + ev.center.y);
+
         currentBall = balls[i];
         console.log("I am in ball " + i);
         // currentBall.path.fillColor = 'black';
@@ -559,7 +573,7 @@ function onPinch(ev) {
     // if not pinching in an existing circle
     if (!interactingWithExistingCircle) {
       creatingCircle = true;
-      var radius = Math.random() * 60 + 60;
+      var radius = minRadius;
       var position = new Point(ev.center.x, ev.center.y + paper.view.bounds.y);
       var tempBall = new Ball(
         radius, 
@@ -847,8 +861,19 @@ function textEditSubmit() {
     balls[ballIndex].nextText.content = "";
   } else if (todofield.value.length > 20){
     // console.log("halp I'm too big");
-    var slicedTextA = todofield.value.slice(0,20);
-    var slicedTextB = todofield.value.slice(20);
+
+    // var slicedTextA = todofield.value.slice(0,20);
+    // var slicedTextB = todofield.value.slice(20);
+    
+    var cutat = todofield.value.lastIndexOf(' ',20);
+    if(cutat!=-1) {
+      slicedTextA = todofield.value.substring(0, cutat);
+      slicedTextB = todofield.value.substring(cutat);
+    }
+
+    console.log("slicedTextA - " + slicedTextA);
+    console.log("slicedTextB - " + slicedTextB);
+
     // console.log(slicedTextA);
     // console.log(slicedTextB);
     balls[ballIndex].textInput.content = slicedTextA;
@@ -888,20 +913,21 @@ function textEditSubmit() {
   $( "#todolist" ).hide();
 }
 
-$("#remind-me-button").on("click", function() {
-  $("#remind-me-button").slideUp(200);
-  $("#timer-container").show();
-});
+function cutBeginning(n, text) {
+  var short = text.substr(n);
+  if (/^\S/.test(text.substr(0, n))) {
+    return short.replace(/\s+\S*$/, "");
+  }
+  return short;
+}
 
-$("#cancel-button").on("click", function() {
-  numTimeUnits.val(null);
-  timeUnits.val("seconds");
-  $("#timer-container").slideUp(200);
-  $("#remind-me-button").show();
-});
-
-$("#loader-container").addClass("hiddenLoader");
-$("#loader").hide("");
+function cutEnd(n, text) {
+  var short = text.substr(n);
+  if (/^\S/.test(text.substr(n))) {
+    return short.replace(/\s+\S*$/, "");
+  }
+  return short;
+}
 
     // $("#rainBalls").click(function(){
     //     if(balls.length != 0){
