@@ -1,0 +1,9 @@
+{
+    "name": "mandrill-api",
+    "version": "1.0.38",
+    "main": "mandrill.min.js",
+    "ignore": [
+        "tests",
+        "src"
+    ]
+}
