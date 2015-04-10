@@ -286,7 +286,7 @@ function Ball(r, p, v, textInput) {
   this.point = p;
   this.vector = v;
   this.maxVec = 2;
-  this.numSegment = 8;//Math.floor(r / 3 + 2);
+  this.numSegment = Math.floor(r / 3 + 2);
   this.boundOffset = [];
   this.boundOffsetBuff = [];
   this.sidePoints = [];
@@ -411,8 +411,7 @@ Ball.prototype = {
     for (var i = 0; i < this.numSegment; i ++)
       segments[i].point = this.getSidePoint(i);
 
-    // this.path.smooth();
-    // this.tempPath.smooth();
+    this.path.smooth();
     for (var i = 0; i < this.numSegment; i ++) {
       if (this.boundOffset[i] < this.radius / 4)
         this.boundOffset[i] = this.radius / 4;
@@ -429,11 +428,11 @@ Ball.prototype = {
       segmentsOverlay[i].point = this.getSidePoint(i);
 
     // this.tempPath.smooth();
-    // for (var i = 0; i < this.numSegment; i ++) {
+    // for (var i = 0; i < 4; i ++) {
     //   if (this.boundOffset[i] < this.radius / 4)
     //     this.boundOffset[i] = this.radius / 4;
-    //   var next = (i + 1) % this.numSegment;
-    //   var prev = (i > 0) ? i - 1 : this.numSegment - 1;
+    //   var next = (i + 1) % 4;
+    //   var prev = (i > 0) ? i - 1 : 4 - 1;
     //   var offset = this.boundOffset[i];
     //   offset += (this.radius - offset) / 15;
     //   offset += ((this.boundOffset[next] + this.boundOffset[prev]) / 2 - offset) / 3;
@@ -693,12 +692,12 @@ function onPan(ev) {
 
       // scroll down 7px at a time if the user ius holding the circle near the bottom of the view
       if (currentBall.point.y > (paper.view.bounds.height + paper.view.bounds.y - 50)) {
-        paper.view.scrollBy(new Point(0, 7));
+        paper.view.scrollBy(new Point(0, 15));
       }
       // scroll up 7px at a time if the user is holding the circle near the bottom of the view, 
       // and its not past the "top edge"
       else if ((currentBall.point.y < (paper.view.bounds.y + 50)) &&  (paper.view.bounds.y -5 > 0)) {
-        paper.view.scrollBy(new Point(0, -7));
+        paper.view.scrollBy(new Point(0, -15));
       }
     }
     else {

@@ -104,21 +104,16 @@ canvas[resize] {
 }
 
 #loader-container {
-  /*position: absolute;*/
+  position: absolute;
+  top:0;
+  left:0;
   width: 100%;
   height: 100%;
   background-color: white;
-  color: white;
-  text-align: center;
-  /*padding: 50% 0 50% 0;*/
-  position: relative;
-  top: -10%;
-  right: -5%;
-  transform: translateY(-50%);
 
-  -webkit-transform: rotate(30deg); /* Chrome, Safari, Opera */
-      -ms-transform: rotate(30deg); /* IE 9 */
-          transform: rotate(30deg);
+  /*-webkit-transform: rotate(30deg);
+      -ms-transform: rotate(30deg);
+          transform: rotate(30deg);*/
 
   -webkit-transition: opacity 0.5s, height 0.5s;
           transition: opacity 0.5s, height 0.5s;
@@ -130,23 +125,23 @@ canvas[resize] {
 }
 
 #loader {
-  width: 100px;
-  height: 100px;
-  background-color: red;
+  width: 30px;
+  height: 30px;
+  background-color: #ccc;
   margin: 0 auto;
   position: relative;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 40%;
+  border-radius: 30px;
   -webkit-animation: sk-rotatePlane 1.2s infinite ease-in-out;
           animation: sk-rotatePlane 1.2s infinite ease-in-out;
 }
 
-#loader:before {
+/*#loader:before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  border-bottom: 29px solid red;
+  border-bottom: 29px solid black;
   border-left: 29px solid white;
   border-right: 29px solid white;
   width: 42px;
@@ -158,12 +153,12 @@ canvas[resize] {
   position: absolute;
   bottom: 0;
   left: 0;
-  border-top: 29px solid red;
+  border-top: 29px solid black;
   border-left: 29px solid white;
   border-right: 29px solid white;
   width: 42px;
   height: 0;
-}
+}*/
 
 @-webkit-keyframes sk-rotatePlane {
   0% {
