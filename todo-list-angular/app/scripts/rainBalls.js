@@ -294,10 +294,6 @@ function Ball(r, p, v, textInput) {
   this.timeUntilAlarm;
   this.timeUntilAlarmUnits = "seconds";
   this.alarmTimeMilliseconds;
-
-  // this.textInput = textInput;
-  // console.log(this.textInput);
-
   
   // console.log(textInput);
   this.path = new Path({
@@ -342,10 +338,6 @@ function Ball(r, p, v, textInput) {
   this.dateText.justification = 'center';
   this.dateText.fontSize = 12;
 
-  // console.log(this.textInput);
-  // console.log(this.nextText);
-  // console.log(this.timerText);
-
   // first object = clipping mask
   // the rest are displayed as normal
   var tempGroup = new Group([this.tempPath,this.textInput, this.nextText, this.timerText, this.dateText]);
@@ -375,9 +367,6 @@ Ball.prototype = {
 
     this.dateText.point = this.point;
     this.dateText.point.y += this.radius - 45;
-    // if (this.alarmTimeMilliseconds != undefined)
-    //  console.log(new Date(this.alarmTimeMilliseconds));
-    // this.timerText.content = this.alarmTimeMilliseconds == undefined ? "": this.alarmTimeMilliseconds;
 
     this.updateShape();
   },
@@ -792,10 +781,9 @@ function inCircle(center_x, center_y, radius, x, y) {
 
 function tappedTodo() {
   var ballIndex = currentBallIndex;
-  var tempContent = "";
-
-  // console.log(balls[ballIndex].textInput.content);
-  tempContent = balls[ballIndex].textInput.content + balls[ballIndex].nextText.content;
+  
+  // sets the content of the popup to whatever is in the ball
+  var tempContent = balls[ballIndex].textInput.content + balls[ballIndex].nextText.content;
   todofield.value = tempContent;
 
   // numTimeUnits.value = balls[ballIndex].timeUntilAlarm;
@@ -857,48 +845,56 @@ function textEditSubmit() {
   }
   if (todofield.value.length > -1 && todofield.value.length <= 20){
     // console.log('just right');
+    // line length is good so doesn't set the next line to anything
     balls[ballIndex].nextText.content = "";
   } else if (todofield.value.length > 20){
-    // console.log("halp I'm too big");
+    console.log("halp I'm too big");
+    // sets the next line based on character amount
 
     // var slicedTextA = todofield.value.slice(0,20);
     // var slicedTextB = todofield.value.slice(20);
-    
     var cutat = todofield.value.lastIndexOf(' ',20);
     if(cutat!=-1) {
+      // If there's a space before 20 chars, make a new line
+      slicedTextA = todofield.value.substring(0, cutat);
+      slicedTextB = todofield.value.substring(cutat);
+      console.log("slicedTextA - " + slicedTextA);
+      console.log("slicedTextB - " + slicedTextB);
+
+      // console.log(slicedTextA);
+      // console.log(slicedTextB);
+      
+    } else if (todofield.value.indexOf(' ') ==-1){
+      // else if there's no space at all, only 1 line
+       slicedTextA = todofield.value;
+       slicedTextB = "";
+    } else {
+      // else if there is a space above 20 chars, make a new line at that point
+      cutat = todofield.value.indexOf(' ');
       slicedTextA = todofield.value.substring(0, cutat);
       slicedTextB = todofield.value.substring(cutat);
     }
 
-    console.log("slicedTextA - " + slicedTextA);
-    console.log("slicedTextB - " + slicedTextB);
-
-    // console.log(slicedTextA);
-    // console.log(slicedTextB);
     balls[ballIndex].textInput.content = slicedTextA;
     balls[ballIndex].nextText.content = slicedTextB;
+    
   }
 
   var alarmTimeMilliseconds = new Date().getTime() + (numTimeUnits.val() * timeUnitsMultiplier);
-  
 
   userEmail = $("#email-field").val();
   pushEmail(userEmail);
-  // console.log(alarmTimeMilliseconds);
   if (alarmTimeMilliseconds > new Date().getTime()){
+    // when timer is set, sets the alarm field in the ball
+    // to the proper time
     balls[ballIndex].alarmTimeMilliseconds = alarmTimeMilliseconds;
-    // console.log(alarmTimeMilliseconds);
     nextAlarm = new Date(alarmTimeMilliseconds);
     parsedAlarm = nextAlarm.toString();
     parsedArray = parsedAlarm.split(" ", 5);
-    // monthdayParsed = nextAlarm.getMonth() + " " + nextAlarm.getDate();
-    // hmsParsed = nextAlarm.getHours() + ":"+ 
-    // nextAlarm.getMinutes()+":"+nextAlarm.getSeconds();
-    // console.log(monthdayParsed + " " + hmsParsed);
     balls[ballIndex].timerText.content = parsedArray[4];
     balls[ballIndex].dateText.content = parsedArray[1]+" "+parsedArray[2];
   } else if (alarmTimeMilliseconds <= new Date().getTime()){
-    // console.log("wow");
+    // resets the alarm, and makes the text in the ball disappear
     balls[ballIndex].timerText.content = "";
     balls[ballIndex].dateText.content = "";
     balls[ballIndex].alarmTimeMilliseconds = undefined;
@@ -927,21 +923,3 @@ function cutEnd(n, text) {
   }
   return short;
 }
-
-    // $("#rainBalls").click(function(){
-    //     if(balls.length != 0){
-    //         console.log("we got balls");
-    //         console.log(balls);
-    //     }
-
-    // });
-
-// Attempting to catch the user closing tab, but fails on mobile
-// window.onunload = window.onbeforeunload = function() {
-//   return "Bye now!";
-//   alert("Bye now!");
-// };
-
-// $( window ).unload(function() {
-//   return "Bye now!";
-// });
